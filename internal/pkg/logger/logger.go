@@ -6,7 +6,7 @@ import (
 	"project-management-system/internal/pkg/config"
 )
 
-func Setup(env commonconfig.commonconfig) *slog.Logger {
+func Setup(env commonconfig.Env) *slog.Logger {
 	var log *slog.Logger
 
 	switch env {

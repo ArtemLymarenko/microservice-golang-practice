@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 	"project-management-system/internal/pkg/logger"
-	"project-management-system/internal/pkg/storage/posgres"
-	"project-management-system/internal/services/user-service/internal/config"
+	postgresql "project-management-system/internal/pkg/storage/posgres"
+	"project-management-system/internal/user-service/internal/config"
 )
 
 func main() {

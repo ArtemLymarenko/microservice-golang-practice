@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"project-management-system/internal/pkg/logger"
-	"project-management-system/internal/services/project-service/internal/config"
+	"project-management-system/internal/project-service/internal/config"
 )
 
 func main() {

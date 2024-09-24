@@ -17,7 +17,7 @@ const (
 	sslVerifyFull = "verify-full"
 )
 
-func getSSLConfig(env commonconfig.commonconfig) string {
+func getSSLConfig(env commonconfig.Env) string {
 	var sslConfig string
 	if env == commonconfig.EnvLocal {
 		sslConfig = sslDisable
@@ -41,7 +41,6 @@ type PostgresConfig interface {
 	GetPort() int
 	GetPoolMin() int
 	GetPoolMax() int
-	GetMigrationsPath() string
 }
 
 func New(
@@ -76,7 +75,7 @@ func New(
 	log.Info("connected to database")
 
 	m, err := migrate.New(
-		"file://"+ps.GetMigrationsPath(),
+		"file://migrations",
 		connectionPath,
 	)
 

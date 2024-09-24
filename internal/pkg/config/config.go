@@ -1,10 +1,10 @@
 package commonconfig
 
 import (
+	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
-	"strings"
 )
 
 type Env string
@@ -15,32 +15,39 @@ const (
 	EnvProd  Env = "prod"
 )
 
-func MustGet[T any](path string) *T {
-	if strings.Trim(path, " ") == "" {
-		log.Fatal("config path was not found")
-	}
+func expandEnvVars(input string) string {
+	return os.Expand(input, func(key string) string {
+		return os.Getenv(key)
+	})
+}
 
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		log.Fatalf("path %v does not exists", path)
-	}
-
-	file, err := os.Open(path)
-	defer func() {
-		if err = file.Close(); err != nil {
-			log.Fatalf("error closing file: %v", err)
-		}
-	}()
-
+func parseYAMLWithEnv[T any](file string) *T {
+	content, err := os.ReadFile(file)
 	if err != nil {
-		log.Fatalf("cannot open the file")
+		return nil
 	}
+
+	contentWithEnv := expandEnvVars(string(content))
 
 	var config T
-	decoder := yaml.NewDecoder(file)
-	err = decoder.Decode(&config)
+	err = yaml.Unmarshal([]byte(contentWithEnv), &config)
 	if err != nil {
-		log.Fatalf("error parsing the file")
+		return nil
 	}
 
 	return &config
+}
+
+func MustGet[T any](path string) *T {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("failed to load .env")
+	}
+
+	config := parseYAMLWithEnv[T](path)
+	if config == nil {
+		log.Fatal("error parsing yaml")
+	}
+
+	return config
 }

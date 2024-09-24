@@ -1,14 +1,14 @@
 package config
 
 import (
-	"project-management-system/internal/pkg/config"
+	commonconfig "project-management-system/internal/pkg/config"
 	"time"
 )
 
 type Config struct {
-	Env        commonconfig.commonconfig `yaml:"env"`
-	Postgres   Postgres                  `yaml:"postgres"`
-	HttpServer HttpServer                `yaml:"httpServer"`
+	Env        commonconfig.Env `yaml:"env"`
+	Postgres   Postgres         `yaml:"postgres"`
+	HttpServer HttpServer       `yaml:"httpServer"`
 }
 
 type Postgres struct {
@@ -30,5 +30,5 @@ type HttpServer struct {
 }
 
 func New() *Config {
-	return commonconfig.MustGet[Config]("project-service/configs/configs.yaml")
+	return commonconfig.MustGet[Config]("configs/configs.yaml")
 }
