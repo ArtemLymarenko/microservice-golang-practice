@@ -38,13 +38,15 @@ func parseYAMLWithEnv[T any](file string) *T {
 	return &config
 }
 
-func MustGet[T any](path string) *T {
+func MustGet[T any]() *T {
+	const configPath = "configs/configs.yaml"
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("failed to load .env")
 	}
 
-	config := parseYAMLWithEnv[T](path)
+	config := parseYAMLWithEnv[T](configPath)
 	if config == nil {
 		log.Fatal("error parsing yaml")
 	}

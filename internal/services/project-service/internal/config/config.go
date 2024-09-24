@@ -19,5 +19,5 @@ type HttpServer struct {
 }
 
 func New() *Config {
-	return commonconfig.MustGet[Config]("configs/configs.yaml")
+	return commonconfig.MustGet[Config]()
 }
