@@ -1,0 +1,15 @@
+env: local
+postgres:
+  user: postgres
+  password: postgres
+  port: 5432
+  host: localhost
+  name: projects
+  dialect: postgres
+  poolMin: 2
+  poolMax: 10
+httpServer:
+  addr: localhost
+  port: 8081
+  timeout: 4s
+  idleTimeout: 60s
