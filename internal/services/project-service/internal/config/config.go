@@ -11,17 +11,6 @@ type Config struct {
 	HttpServer HttpServer       `yaml:"httpServer"`
 }
 
-type Postgres struct {
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	Host     string `yaml:"host"`
-	Name     string `yaml:"name"`
-	Dialect  string `yaml:"dialect"`
-	Port     int    `yaml:"port"`
-	PoolMin  int    `yaml:"poolMin"`
-	PoolMax  int    `yaml:"poolMax"`
-}
-
 type HttpServer struct {
 	Addr        string        `yaml:"addr"`
 	Port        int           `yaml:"port"`

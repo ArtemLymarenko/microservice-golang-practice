@@ -1,15 +1,15 @@
 env: local
 postgres:
-  user: postgres
-  password: postgres
-  port: 5432
-  host: localhost
-  name: projects
+  user: ${DB_USER}
+  password: ${DB_PASSWORD}
+  port: ${DB_PORT}
+  host: ${DB_HOST}
+  name: ${DB_NAME}
   dialect: postgres
   poolMin: 2
   poolMax: 10
 httpServer:
-  addr: localhost
-  port: 8081
+  addr: ${SERVER_ADDR}
+  port: ${SERVER_PORT}
   timeout: 4s
   idleTimeout: 60s
