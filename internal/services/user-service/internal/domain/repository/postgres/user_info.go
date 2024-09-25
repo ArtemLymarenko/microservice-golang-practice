@@ -7,14 +7,12 @@ import (
 	"project-management-system/internal/user-service/internal/domain/model"
 )
 
-type execContext interface {
+type DBContext interface {
 	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
-	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
-	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
 }
 
 type UserInfoRepository struct {
-	db execContext
+	db DBContext
 }
 
 func NewUserInfoRepository(db *sql.DB) *UserInfoRepository {

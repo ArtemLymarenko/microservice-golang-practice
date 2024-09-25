@@ -17,7 +17,7 @@ type UsersRepository struct {
 	userInfoRepo UserInfoRepo
 }
 
-func NewUsersRepository(db *sql.DB, userInfoRepo *UserInfoRepository) *UsersRepository {
+func NewUsersRepository(db *sql.DB, userInfoRepo UserInfoRepo) *UsersRepository {
 	return &UsersRepository{db, userInfoRepo}
 }
 
@@ -26,7 +26,9 @@ func (r *UsersRepository) findOne(ctx context.Context, query string, args ...int
 	if err != nil {
 		return nil, err
 	}
-	defer stmt.Close()
+	defer func() {
+		_ = stmt.Close()
+	}()
 
 	user := model.User{}
 	err = stmt.QueryRowContext(ctx, args...).Scan(

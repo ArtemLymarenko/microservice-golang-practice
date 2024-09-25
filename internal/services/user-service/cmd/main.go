@@ -23,7 +23,7 @@ func main() {
 	ur := postgres.NewUsersRepository(connection, postgres.NewUserInfoRepository(connection))
 
 	ctx := context.Background()
-	user, _ := model.NewUser("a3@a.com", "pass", "first", "last")
+	user, _ := model.NewUser("a5@a.com", "pass", "first", "last")
 	err = ur.Save(ctx, user)
 	if err != nil {
 		logrus.Info(err.Error())
