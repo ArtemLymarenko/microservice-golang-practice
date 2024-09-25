@@ -48,7 +48,7 @@ func NewPostgres(
 
 	db, err := sql.Open(ps.GetDialect(), connectionPath)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", err)
+		return nil, err
 	}
 
 	db.SetMaxIdleConns(ps.GetPoolMin())
@@ -57,7 +57,7 @@ func NewPostgres(
 	err = db.Ping()
 	if err != nil {
 		_ = db.Close()
-		return nil, fmt.Errorf("%s: %w", err)
+		return nil, ErrPingPostgres
 	}
 
 	logrus.Info("connected to database")
@@ -69,12 +69,12 @@ func NewPostgres(
 
 	if err != nil {
 		_ = db.Close()
-		return nil, err
+		return nil, ErrCreateMigrationPostgres
 	}
 
 	if err = m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		_ = db.Close()
-		return nil, err
+		return nil, ErrMigratePostgres
 	}
 
 	logrus.Info("migrations created")

@@ -18,10 +18,17 @@ type User struct {
 type UserInfo struct {
 	FirstName string
 	LastName  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func NewUserInfo(firstName, lastName string) UserInfo {
-	return UserInfo{firstName, lastName}
+	return UserInfo{
+		FirstName: firstName,
+		LastName:  lastName,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
 }
 
 func NewUser(email, password, firstName, lastName string) (*User, error) {

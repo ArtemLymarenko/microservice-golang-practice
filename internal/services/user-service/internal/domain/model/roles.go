@@ -1,24 +1,19 @@
 package model
 
-import (
-	"github.com/google/uuid"
-)
-
-type RoleName string
+type Role string
 
 const (
-	SUPER_ADMIN RoleName = "super_admin"
-	ADMIN       RoleName = "admin"
-	DEV         RoleName = "dev"
-	GUEST       RoleName = "guest"
+	SuperAdmin Role = "super_admin"
+	Admin      Role = "admin"
+	Dev        Role = "dev"
+	Guest      Role = "guest"
 )
 
-type Role struct {
-	Id       uuid.UUID
-	RoleName RoleName
+type UserRole struct {
+	UserId string
+	Role   Role
 }
 
-func NewRole(roleName RoleName) Role {
-	id := uuid.New()
-	return Role{id, roleName}
+func NewUserRole(userId string, role Role) UserRole {
+	return UserRole{userId, role}
 }
