@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	"project-management-system/internal/pkg/logger"
-	postgresql "project-management-system/internal/pkg/storage/posgres"
+	postgresql "project-management-system/internal/pkg/storage"
 	"project-management-system/internal/project-service/internal/config"
 )
 

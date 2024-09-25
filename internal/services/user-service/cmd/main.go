@@ -1,24 +1,22 @@
 package main
 
 import (
+	"github.com/sirupsen/logrus"
 	"os"
-	"project-management-system/internal/pkg/logger"
-	postgresql "project-management-system/internal/pkg/storage/posgres"
+	"project-management-system/internal/pkg/storage"
 	"project-management-system/internal/user-service/internal/config"
 )
 
 func main() {
 	cfg := config.MustGet()
-	logs := logger.Setup(cfg.Env)
-	logs.Info("Hello World!")
-	s, err := postgresql.New(cfg.Postgres, cfg.Env, logs)
+	s, err := storage.NewPostgres(cfg.Postgres, cfg.Env)
 	if err != nil {
-		logs.Info(err.Error())
+		logrus.Fatal(err.Error())
 		os.Exit(1)
 	}
 	err = s.CloseConnection()
 	if err != nil {
-		logs.Info(err.Error())
+		logrus.Info(err.Error())
 		os.Exit(1)
 	}
 }

@@ -1,4 +1,4 @@
-package postgresql
+package storage
 
 import (
 	"database/sql"
@@ -8,7 +8,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
-	"log/slog"
+	"github.com/sirupsen/logrus"
 	"project-management-system/internal/pkg/config"
 )
 
@@ -28,26 +28,14 @@ func getSSLConfig(env commonconfig.Env) string {
 	return sslConfig
 }
 
-type Storage struct {
-	Db *sql.DB
+type postgres struct {
+	db *sql.DB
 }
 
-type PostgresConfig interface {
-	GetUser() string
-	GetPassword() string
-	GetHost() string
-	GetName() string
-	GetDialect() string
-	GetPort() int
-	GetPoolMin() int
-	GetPoolMax() int
-}
-
-func New(
+func NewPostgres(
 	ps PostgresConfig,
 	env commonconfig.Env,
-	log *slog.Logger,
-) (*Storage, error) {
+) (*postgres, error) {
 	connectionPath := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
 		ps.GetUser(),
@@ -72,7 +60,7 @@ func New(
 		return nil, fmt.Errorf("%s: %w", err)
 	}
 
-	log.Info("connected to database")
+	logrus.Info("connected to database")
 
 	m, err := migrate.New(
 		"file://migrations",
@@ -89,15 +77,23 @@ func New(
 		return nil, err
 	}
 
-	log.Info("migrations created")
+	logrus.Info("migrations created")
 
-	return &Storage{db}, nil
+	return &postgres{db}, nil
 }
 
-func (r *Storage) CloseConnection() error {
-	if err := r.Db.Close(); err != nil {
-		return err
+func (p *postgres) CloseConnection() error {
+	if err := p.db.Close(); err != nil {
+		return ErrClosePostgresConnection
 	}
 
 	return nil
+}
+
+func (p *postgres) GetConnection() (*sql.DB, error) {
+	if p.db != nil {
+		return p.db, nil
+	}
+
+	return nil, ErrGetPostgresConnection
 }
