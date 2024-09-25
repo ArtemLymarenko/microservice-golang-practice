@@ -19,5 +19,6 @@ type HttpServer struct {
 }
 
 func MustGet() *Config {
-	return commonconfig.MustGet[Config]()
+	const configPath = "resources/local-config.yaml"
+	return commonconfig.MustGet[Config](configPath)
 }

@@ -1,4 +1,4 @@
-package domain
+package model
 
 import (
 	"errors"
@@ -7,17 +7,17 @@ import (
 )
 
 type User struct {
-	Id        uuid.UUID `json:"id"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	UserInfo  UserInfo  `json:"userInfo"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	Id        string
+	Email     string
+	Password  string
+	UserInfo  UserInfo
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type UserInfo struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	FirstName string
+	LastName  string
 }
 
 func NewUserInfo(firstName, lastName string) UserInfo {
@@ -32,7 +32,7 @@ func NewUser(email, password, firstName, lastName string) (*User, error) {
 	id := uuid.New()
 
 	user := User{
-		Id:        id,
+		Id:        id.String(),
 		Email:     email,
 		Password:  password,
 		UserInfo:  NewUserInfo(firstName, lastName),

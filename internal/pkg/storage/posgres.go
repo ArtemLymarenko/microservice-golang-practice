@@ -35,7 +35,7 @@ type postgres struct {
 func NewPostgres(
 	ps PostgresConfig,
 	env commonconfig.Env,
-) (*postgres, error) {
+) (Postgres, error) {
 	connectionPath := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
 		ps.GetUser(),

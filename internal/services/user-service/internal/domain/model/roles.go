@@ -1,4 +1,4 @@
-package domain
+package model
 
 import (
 	"github.com/google/uuid"
@@ -14,8 +14,8 @@ const (
 )
 
 type Role struct {
-	Id       uuid.UUID `json:"id"`
-	RoleName RoleName  `json:"roleName"`
+	Id       uuid.UUID
+	RoleName RoleName
 }
 
 func NewRole(roleName RoleName) Role {
