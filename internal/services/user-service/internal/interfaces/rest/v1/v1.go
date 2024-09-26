@@ -12,7 +12,7 @@ func InitializeRouter(handlers *handlers.Handlers) *gin.Engine {
 
 	router := gin.Default()
 
-	router.POST(Users, handlers.UsersHandler.Register)
+	router.POST(Users, handlers.AuthHandler.Register)
 
 	return router
 }

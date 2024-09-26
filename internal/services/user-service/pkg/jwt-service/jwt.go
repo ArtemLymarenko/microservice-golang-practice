@@ -25,6 +25,20 @@ func (jwts JWTService) Generate(userId string, expirationTime time.Duration) (st
 	return token.SignedString([]byte(jwts.secret))
 }
 
+func (jwts JWTService) GenerateTokenAsync(
+	userId string,
+	exp time.Duration,
+	tokenChan chan string,
+) {
+	token, err := jwts.Generate(userId, exp)
+	if err != nil {
+		tokenChan <- ""
+		return
+	}
+
+	tokenChan <- token
+}
+
 func (jwts JWTService) Verify(tokenToCheck string) (*jwt.RegisteredClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenToCheck, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwts.secret), nil

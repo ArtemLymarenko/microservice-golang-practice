@@ -20,7 +20,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	handlers, err := v1Handlers.New(postgres, cfg.Service.Timeout)
+	handlers, err := v1Handlers.New(postgres, cfg.Service.Timeout, cfg)
 	if err != nil {
 		logrus.Fatal(err.Error())
 		os.Exit(1)

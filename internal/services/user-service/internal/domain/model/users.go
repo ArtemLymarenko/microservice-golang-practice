@@ -17,6 +17,10 @@ func (u *User) SetId(id string) {
 	u.Id = id
 }
 
+func (u *User) SetPassword(password string) {
+	u.Password = password
+}
+
 func (u *User) SetUpdatedAt(updatedAt time.Time) {
 	u.UpdatedAt = updatedAt
 }

@@ -9,20 +9,19 @@ import (
 	"project-management-system/internal/user-service/internal/interfaces/rest/dto"
 )
 
-type UserService interface {
-	FindById(ctx context.Context, id string) (*model.User, error)
-	Save(ctx context.Context, user model.User) error
+type AuthService interface {
+	Register(ctx context.Context, user model.User) (*dto.RegisterUserResponse, error)
 }
 
-type usersHandler struct {
-	userService UserService
+type authHandler struct {
+	authService AuthService
 }
 
-func NewUsersHandler(userServ UserService) *usersHandler {
-	return &usersHandler{userServ}
+func NewAuthHandler(authService AuthService) *authHandler {
+	return &authHandler{authService}
 }
 
-func (u *usersHandler) Register(c *gin.Context) {
+func (a *authHandler) Register(c *gin.Context) {
 	var registerDto dto.RegisterUserRequest
 	if err := c.ShouldBindJSON(&registerDto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -31,11 +30,11 @@ func (u *usersHandler) Register(c *gin.Context) {
 
 	user := mapper.FromRegisterUserDTOToModel(registerDto)
 	ctx := c.Request.Context()
-	err := u.userService.Save(ctx, user)
+	registerUserResponse, err := a.authService.Register(ctx, user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "you was registered"})
+	c.JSON(http.StatusOK, registerUserResponse)
 }

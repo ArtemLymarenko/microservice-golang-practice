@@ -6,6 +6,7 @@ import (
 )
 
 type Config struct {
+	App        App              `yaml:"app"`
 	Env        commonconfig.Env `yaml:"env"`
 	Postgres   Postgres         `yaml:"postgres"`
 	HttpServer HttpServer       `yaml:"httpServer"`
