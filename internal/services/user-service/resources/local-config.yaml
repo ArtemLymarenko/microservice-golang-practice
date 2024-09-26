@@ -13,3 +13,6 @@ httpServer:
   port: ${SERVER_PORT}
   timeout: 4s
   idleTimeout: 60s
+  shutDownTimeout: 5s
+service:
+  timeout: 5s

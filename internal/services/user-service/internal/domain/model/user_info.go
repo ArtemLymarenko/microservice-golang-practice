@@ -9,11 +9,19 @@ type UserInfo struct {
 	UpdatedAt time.Time
 }
 
-func NewUserInfo(firstName, lastName string) UserInfo {
-	return UserInfo{
-		FirstName: firstName,
-		LastName:  lastName,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
+func (u *UserInfo) SetFirstName(firstName string) {
+	u.FirstName = firstName
+}
+
+func (u *UserInfo) SetLastName(lastName string) {
+	u.LastName = lastName
+}
+
+func (u *UserInfo) SetUpdatedAt(updatedAt time.Time) {
+	u.UpdatedAt = updatedAt
+}
+
+func (u *UserInfo) SetCreatedAt() {
+	u.CreatedAt = time.Now()
+	u.SetUpdatedAt(time.Now())
 }

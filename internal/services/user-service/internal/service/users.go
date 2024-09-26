@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"project-management-system/internal/user-service/internal/domain/model"
+	"strings"
 	"time"
 )
 
@@ -30,6 +32,14 @@ func (u *UsersService) FindById(ctx context.Context, id string) (*model.User, er
 func (u *UsersService) Save(ctx context.Context, user model.User) error {
 	timeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
+
+	if strings.Trim(user.Id, " ") == "" {
+		id := uuid.New()
+		user.SetId(id.String())
+	}
+
+	user.SetCreatedAt()
+	user.UserInfo.SetCreatedAt()
 
 	return u.usersRepo.Save(timeout, user)
 }

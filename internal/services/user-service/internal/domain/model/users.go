@@ -1,7 +1,6 @@
 package model
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
@@ -14,14 +13,21 @@ type User struct {
 	UpdatedAt time.Time
 }
 
-func NewUser(email, password, firstName, lastName string) (User, error) {
-	id := uuid.New()
-	return User{
-		Id:        id.String(),
-		Email:     email,
-		Password:  password,
-		UserInfo:  NewUserInfo(firstName, lastName),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}, nil
+func (u *User) SetId(id string) {
+	u.Id = id
+}
+
+func (u *User) SetUpdatedAt(updatedAt time.Time) {
+	u.UpdatedAt = updatedAt
+}
+
+func (u *User) SetCreatedAt() {
+	u.CreatedAt = time.Now()
+	u.SetUpdatedAt(time.Now())
+}
+
+func (u *User) SetUserInfo(firstName, lastName string) {
+	u.UserInfo.SetFirstName(firstName)
+	u.UserInfo.SetLastName(lastName)
+	u.UserInfo.SetCreatedAt()
 }

@@ -1,41 +1,46 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"github.com/sirupsen/logrus"
+	"net/http"
 	"os"
 	"project-management-system/internal/pkg/storage"
+	"project-management-system/internal/user-service/internal/app"
 	"project-management-system/internal/user-service/internal/config"
-	"project-management-system/internal/user-service/internal/domain/model"
-	"project-management-system/internal/user-service/internal/domain/repository/postgres"
+	v1 "project-management-system/internal/user-service/internal/interfaces/rest/v1"
 )
 
 func main() {
 	cfg := config.MustGet()
-	s, err := storage.NewPostgres(cfg.Postgres, cfg.Env)
+
+	postgres, err := storage.NewPostgres(cfg.Postgres, cfg.Env)
 	if err != nil {
 		logrus.Fatal(err.Error())
 		os.Exit(1)
 	}
 
-	connection, _ := s.GetConnection()
-	ur := postgres.NewUsersRepository(connection, postgres.NewUserInfoRepository(connection))
+	handlers, err := v1.InitializeHandlers(postgres, cfg.Service.Timeout)
+	if err != nil {
+		logrus.Fatal(err.Error())
+		os.Exit(1)
+	}
 
-	ctx := context.Background()
-	user, _ := model.NewUser("a5@a.com", "pass", "first", "last")
-	err = ur.Save(ctx, user)
-	if err != nil {
-		logrus.Fatal(err.Error())
-	}
-	found, err := ur.FindById(ctx, user.Id)
-	if err != nil {
-		logrus.Fatal(err.Error())
-	}
-	fmt.Println(found)
+	router := v1.InitializeRouter(handlers)
 
-	err = s.CloseConnection()
+	path, err := app.BuildHttpPath(cfg.HttpServer.Addr, cfg.HttpServer.Port)
 	if err != nil {
 		logrus.Fatal(err.Error())
+		os.Exit(1)
 	}
+
+	server := &http.Server{
+		Addr:         path,
+		Handler:      router,
+		ReadTimeout:  cfg.HttpServer.Timeout,
+		WriteTimeout: cfg.HttpServer.Timeout,
+		IdleTimeout:  cfg.HttpServer.IdleTimeout,
+	}
+
+	application := app.New(postgres, server)
+	application.Start()
 }
