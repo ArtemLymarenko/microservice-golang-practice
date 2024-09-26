@@ -27,18 +27,20 @@ func NewAuthService(usersService UsersServ, jwtService JWTServ) *AuthService {
 	return &AuthService{usersService, jwtService}
 }
 
-func (a *AuthService) Register() {
+func (a *AuthService) Register() {}
 
-}
+func (a *AuthService) Login() {}
 
-func (a *AuthService) Login() {
+func (a *AuthService) IssueTokens(refreshToken string) {}
 
-}
-
-func (a *AuthService) generateTokenAsync(userId string, exp time.Duration, tokenChan chan string, errChan chan error) {
+func (a *AuthService) generateTokenAsync(
+	userId string,
+	exp time.Duration,
+	tokenChan chan string,
+) {
 	token, err := a.jwtService.Generate(userId, exp)
 	if err != nil {
-		errChan <- errors.New("failed to generate token")
+		tokenChan <- ""
 		return
 	}
 
@@ -48,22 +50,16 @@ func (a *AuthService) generateTokenAsync(userId string, exp time.Duration, token
 func (a *AuthService) generateTokens(userId string, accessExp, refreshExp time.Duration) (string, string, error) {
 	accessChan := make(chan string)
 	refreshChan := make(chan string)
-	errChan := make(chan error)
 	defer close(accessChan)
 	defer close(refreshChan)
-	defer close(errChan)
 
-	go a.generateTokenAsync(userId, accessExp, accessChan, errChan)
-	go a.generateTokenAsync(userId, refreshExp, refreshChan, errChan)
+	go a.generateTokenAsync(userId, accessExp, accessChan)
+	go a.generateTokenAsync(userId, refreshExp, refreshChan)
 
-	err := <-errChan
-	if err != nil {
-		return "", "", err
+	accessToken, refreshToken := <-accessChan, <-refreshChan
+	if accessToken == "" || refreshToken == "" {
+		return "", "", errors.New("failed to generate tokens")
 	}
 
-	return <-accessChan, <-refreshChan, nil
-}
-
-func (a *AuthService) IssueTokens(refreshToken string) {
-
+	return accessToken, refreshToken, nil
 }
