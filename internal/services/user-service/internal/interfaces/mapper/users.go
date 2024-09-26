@@ -5,7 +5,7 @@ import (
 	"project-management-system/internal/user-service/internal/interfaces/rest/dto"
 )
 
-func FromRegisterUserDTOToModel(registerDTO dto.RegisterUser) model.User {
+func FromRegisterUserDTOToModel(registerDTO dto.RegisterUserRequest) model.User {
 	return model.User{
 		Email:    registerDTO.Email,
 		Password: registerDTO.Password,

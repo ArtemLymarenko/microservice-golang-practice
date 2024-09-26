@@ -1,3 +1,5 @@
+app:
+  codeName: ${APP_CODENAME}
 env: local
 postgres:
   user: ${DB_USER}
@@ -16,3 +18,7 @@ httpServer:
   shutDownTimeout: 5s
 service:
   timeout: 5s
+jwt:
+  secret: ${JWT_SECRET}
+  accessExp: ${JWT_ACCESS_EXP}
+  refreshExp: ${JWT_REFRESH_EXP}

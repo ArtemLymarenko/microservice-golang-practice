@@ -23,7 +23,7 @@ func NewUsersHandler(userServ UserService) *usersHandler {
 }
 
 func (u *usersHandler) Register(c *gin.Context) {
-	var registerDto dto.RegisterUser
+	var registerDto dto.RegisterUserRequest
 	if err := c.ShouldBindJSON(&registerDto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

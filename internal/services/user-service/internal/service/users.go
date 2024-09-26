@@ -23,14 +23,14 @@ func NewUsersService(usersRepo UsersRepo, ctxTimeout time.Duration) *UsersServic
 }
 
 func (u *UsersService) FindById(ctx context.Context, id string) (*model.User, error) {
-	timeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
-	return u.usersRepo.FindById(timeout, id)
+	return u.usersRepo.FindById(ctxWithTimeout, id)
 }
 
 func (u *UsersService) Save(ctx context.Context, user model.User) error {
-	timeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
 	if strings.Trim(user.Id, " ") == "" {
@@ -41,5 +41,12 @@ func (u *UsersService) Save(ctx context.Context, user model.User) error {
 	user.SetCreatedAt()
 	user.UserInfo.SetCreatedAt()
 
-	return u.usersRepo.Save(timeout, user)
+	return u.usersRepo.Save(ctxWithTimeout, user)
+}
+
+func (u *UsersService) Register(ctx context.Context, user model.User) error {
+	//ctxWithTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	//defer cancel()
+
+	return nil
 }
