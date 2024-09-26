@@ -26,19 +26,16 @@ func main() {
 	user, _ := model.NewUser("a5@a.com", "pass", "first", "last")
 	err = ur.Save(ctx, user)
 	if err != nil {
-		logrus.Info(err.Error())
-		os.Exit(1)
+		logrus.Fatal(err.Error())
 	}
-	found, err := ur.FindByIdWithInfo(ctx, user.Id)
+	found, err := ur.FindById(ctx, user.Id)
 	if err != nil {
-		logrus.Info(err.Error())
-		os.Exit(1)
+		logrus.Fatal(err.Error())
 	}
 	fmt.Println(found)
 
 	err = s.CloseConnection()
 	if err != nil {
-		logrus.Info(err.Error())
-		os.Exit(1)
+		logrus.Fatal(err.Error())
 	}
 }
