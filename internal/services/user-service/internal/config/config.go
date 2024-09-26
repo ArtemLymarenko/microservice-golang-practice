@@ -25,6 +25,6 @@ type Service struct {
 }
 
 func MustGet() *Config {
-	const configPath = "resources/local-config.yaml"
+	const configPath = "resources/config/local.yaml"
 	return commonconfig.MustGet[Config](configPath)
 }
