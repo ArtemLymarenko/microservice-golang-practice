@@ -43,10 +43,3 @@ func (u *UsersService) Save(ctx context.Context, user model.User) error {
 
 	return u.usersRepo.Save(ctxWithTimeout, user)
 }
-
-func (u *UsersService) Register(ctx context.Context, user model.User) error {
-	//ctxWithTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
-	//defer cancel()
-
-	return nil
-}

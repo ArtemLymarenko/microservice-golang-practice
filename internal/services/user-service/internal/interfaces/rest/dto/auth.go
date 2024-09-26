@@ -11,5 +11,5 @@ type RegisterUserResponse struct {
 	AccessToken      string `json:"accessToken"`
 	AccessExpiresIn  string `json:"expiresIn"`
 	RefreshToken     string `json:"refreshToken"`
-	RefreshExpiresIn string `yaml:"refreshExpiresIn"`
+	RefreshExpiresIn string `json:"refreshExpiresIn"`
 }
