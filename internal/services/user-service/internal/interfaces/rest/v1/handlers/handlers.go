@@ -1,10 +1,9 @@
-package v1
+package handlers
 
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"project-management-system/internal/user-service/internal/domain/repository/postgres"
-	"project-management-system/internal/user-service/internal/interfaces/rest/handlers"
 	"project-management-system/internal/user-service/internal/service"
 	"time"
 )
@@ -21,7 +20,7 @@ type Handlers struct {
 	UsersHandler UsersHandler
 }
 
-func InitializeHandlers(storage Storage, serviceTimeout time.Duration) (*Handlers, error) {
+func New(storage Storage, serviceTimeout time.Duration) (*Handlers, error) {
 	connection, err := storage.GetConnection()
 	if err != nil {
 		return nil, err
@@ -34,10 +33,7 @@ func InitializeHandlers(storage Storage, serviceTimeout time.Duration) (*Handler
 	//services
 	userService := service.NewUsersService(usersRepo, serviceTimeout)
 
-	//handlers
-	usersHandler := handlers.NewUsersHandler(userService)
-
 	return &Handlers{
-		usersHandler,
+		UsersHandler: NewUsersHandler(userService),
 	}, err
 }

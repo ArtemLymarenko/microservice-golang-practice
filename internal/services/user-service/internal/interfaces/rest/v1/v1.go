@@ -2,9 +2,10 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
+	"project-management-system/internal/user-service/internal/interfaces/rest/v1/handlers"
 )
 
-func InitializeRouter(handlers *Handlers) *gin.Engine {
+func InitializeRouter(handlers *handlers.Handlers) *gin.Engine {
 	const (
 		Users = "/users"
 	)

@@ -14,15 +14,15 @@ type UserService interface {
 	Save(ctx context.Context, user model.User) error
 }
 
-type UsersHandler struct {
+type usersHandler struct {
 	userService UserService
 }
 
-func NewUsersHandler(userServ UserService) *UsersHandler {
-	return &UsersHandler{userServ}
+func NewUsersHandler(userServ UserService) *usersHandler {
+	return &usersHandler{userServ}
 }
 
-func (u *UsersHandler) Register(c *gin.Context) {
+func (u *usersHandler) Register(c *gin.Context) {
 	var registerDto dto.RegisterUser
 	if err := c.ShouldBindJSON(&registerDto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

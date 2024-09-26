@@ -57,7 +57,7 @@ func NewPostgres(
 	err = db.Ping()
 	if err != nil {
 		_ = db.Close()
-		return nil, ErrPingPostgres
+		return nil, ErrHealthCheckPostgres
 	}
 
 	logrus.Info("connected to database")
