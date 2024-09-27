@@ -14,6 +14,7 @@ import (
 
 type UsersServ interface {
 	FindById(ctx context.Context, id string) (*model.User, error)
+	FindByEmail(ctx context.Context, email string) (*model.User, error)
 	Save(ctx context.Context, user model.User) error
 }
 
@@ -44,7 +45,7 @@ func NewAuthService(
 	}
 }
 
-func (a *AuthService) Register(ctx context.Context, user model.User) (*dto.RegisterUserResponse, error) {
+func (a *AuthService) Register(ctx context.Context, user model.User) (*dto.AuthResponse, error) {
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, a.ctxTimeout)
 	defer cancel()
 
@@ -58,7 +59,7 @@ func (a *AuthService) Register(ctx context.Context, user model.User) (*dto.Regis
 
 	password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost+bcrypt.MinCost)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("failed to hash password")
 	}
 	user.SetPassword(string(password))
 
@@ -67,7 +68,7 @@ func (a *AuthService) Register(ctx context.Context, user model.User) (*dto.Regis
 		return nil, err
 	}
 
-	return &dto.RegisterUserResponse{
+	return &dto.AuthResponse{
 		AccessToken:      accessToken,
 		RefreshToken:     refreshToken,
 		AccessExpiresIn:  a.jwtConfig.AccessExp.String(),
@@ -75,7 +76,30 @@ func (a *AuthService) Register(ctx context.Context, user model.User) (*dto.Regis
 	}, nil
 }
 
-func (a *AuthService) Login() {}
+func (a *AuthService) Login(ctx context.Context, user model.User) (*dto.AuthResponse, error) {
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, a.ctxTimeout)
+	defer cancel()
+
+	foundUser, err := a.usersService.FindByEmail(ctxWithTimeout, user.Email)
+	if err != nil {
+		return nil, errors.New("user was not found")
+	}
+
+	hashedPassword := []byte(foundUser.Password)
+	userPassword := []byte(user.Password)
+	err = bcrypt.CompareHashAndPassword(hashedPassword, userPassword)
+	if err != nil {
+		return nil, errors.New("passwords do not match")
+	}
+
+	accessToken, refreshToken, err := a.generateTokens(foundUser.Id, a.jwtConfig.AccessExp, a.jwtConfig.RefreshExp)
+	return &dto.AuthResponse{
+		AccessToken:      accessToken,
+		RefreshToken:     refreshToken,
+		AccessExpiresIn:  a.jwtConfig.AccessExp.String(),
+		RefreshExpiresIn: a.jwtConfig.RefreshExp.String(),
+	}, nil
+}
 
 func (a *AuthService) IssueTokens(refreshToken string) {}
 

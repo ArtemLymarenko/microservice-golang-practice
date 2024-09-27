@@ -15,3 +15,10 @@ func FromRegisterUserDTOToModel(registerDTO dto.RegisterUserRequest) model.User 
 		},
 	}
 }
+
+func FromLoginUserDTOToModel(loginDTO dto.LoginUserRequest) model.User {
+	return model.User{
+		Email:    loginDTO.Email,
+		Password: loginDTO.Password,
+	}
+}

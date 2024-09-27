@@ -10,6 +10,7 @@ import (
 
 type UsersRepo interface {
 	FindById(ctx context.Context, id string) (*model.User, error)
+	FindByEmail(ctx context.Context, email string) (*model.User, error)
 	Save(ctx context.Context, user model.User) error
 }
 
@@ -27,6 +28,13 @@ func (u *UsersService) FindById(ctx context.Context, id string) (*model.User, er
 	defer cancel()
 
 	return u.usersRepo.FindById(ctxWithTimeout, id)
+}
+
+func (u *UsersService) FindByEmail(ctx context.Context, email string) (*model.User, error) {
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	defer cancel()
+
+	return u.usersRepo.FindByEmail(ctxWithTimeout, email)
 }
 
 func (u *UsersService) Save(ctx context.Context, user model.User) error {

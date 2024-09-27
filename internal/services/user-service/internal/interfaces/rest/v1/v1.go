@@ -7,12 +7,14 @@ import (
 
 func InitializeRouter(handlers *handlers.Handlers) *gin.Engine {
 	const (
-		Users = "/users"
+		AuthRegister = "/register"
+		AuthLogin    = "/login"
 	)
 
 	router := gin.Default()
 
-	router.POST(Users, handlers.AuthHandler.Register)
+	router.POST(AuthRegister, handlers.AuthHandler.Register)
+	router.POST(AuthLogin, handlers.AuthHandler.Login)
 
 	return router
 }

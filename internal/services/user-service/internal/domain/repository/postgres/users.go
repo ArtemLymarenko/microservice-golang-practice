@@ -57,6 +57,13 @@ func (r *UsersRepository) FindById(ctx context.Context, id string) (*model.User,
 	return r.findOne(ctx, query, id)
 }
 
+func (r *UsersRepository) FindByEmail(ctx context.Context, email string) (*model.User, error) {
+	query := `SELECT 
+    	u.id, u.email, u.password, u.created_at, u.updated_at, ui.first_name, ui.last_name, ui.created_at, ui.updated_at
+		FROM users AS u LEFT JOIN user_info AS ui ON u.id = ui.user_id WHERE u.email=$1`
+	return r.findOne(ctx, query, email)
+}
+
 func (r *UsersRepository) Save(ctx context.Context, user model.User) error {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {

@@ -10,7 +10,8 @@ import (
 )
 
 type AuthService interface {
-	Register(ctx context.Context, user model.User) (*dto.RegisterUserResponse, error)
+	Register(ctx context.Context, user model.User) (*dto.AuthResponse, error)
+	Login(ctx context.Context, user model.User) (*dto.AuthResponse, error)
 }
 
 type authHandler struct {
@@ -30,11 +31,28 @@ func (a *authHandler) Register(c *gin.Context) {
 
 	user := mapper.FromRegisterUserDTOToModel(registerDto)
 	ctx := c.Request.Context()
-	registerUserResponse, err := a.authService.Register(ctx, user)
+	authResponse, err := a.authService.Register(ctx, user)
 	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, authResponse)
+}
+
+func (a *authHandler) Login(c *gin.Context) {
+	var loginDto dto.LoginUserRequest
+	if err := c.ShouldBindJSON(&loginDto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, registerUserResponse)
+	user := mapper.FromLoginUserDTOToModel(loginDto)
+	ctx := c.Request.Context()
+	authResponse, err := a.authService.Login(ctx, user)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, authResponse)
 }

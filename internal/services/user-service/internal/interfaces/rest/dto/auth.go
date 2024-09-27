@@ -7,7 +7,12 @@ type RegisterUserRequest struct {
 	Password  string `form:"password" json:"password" binding:"required"`
 }
 
-type RegisterUserResponse struct {
+type LoginUserRequest struct {
+	Email    string `form:"email" json:"email" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
+
+type AuthResponse struct {
 	AccessToken      string `json:"accessToken"`
 	AccessExpiresIn  string `json:"expiresIn"`
 	RefreshToken     string `json:"refreshToken"`
