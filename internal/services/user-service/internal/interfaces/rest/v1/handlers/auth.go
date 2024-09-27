@@ -14,15 +14,15 @@ type AuthService interface {
 	Login(ctx context.Context, user model.User) (*dto.AuthResponse, error)
 }
 
-type authHandler struct {
+type AuthHandlerImpl struct {
 	authService AuthService
 }
 
-func NewAuthHandler(authService AuthService) *authHandler {
-	return &authHandler{authService}
+func NewAuthHandler(authService AuthService) *AuthHandlerImpl {
+	return &AuthHandlerImpl{authService}
 }
 
-func (a *authHandler) Register(c *gin.Context) {
+func (a *AuthHandlerImpl) Register(c *gin.Context) {
 	var registerDto dto.RegisterUserRequest
 	if err := c.ShouldBindJSON(&registerDto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -40,7 +40,7 @@ func (a *authHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, authResponse)
 }
 
-func (a *authHandler) Login(c *gin.Context) {
+func (a *AuthHandlerImpl) Login(c *gin.Context) {
 	var loginDto dto.LoginUserRequest
 	if err := c.ShouldBindJSON(&loginDto); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
