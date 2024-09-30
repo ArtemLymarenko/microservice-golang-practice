@@ -7,14 +7,19 @@ import (
 
 func InitializeRouter(handlers *handlers.Handlers) *gin.Engine {
 	const (
+		IssueTokens  = "/issue-tokens"
 		AuthRegister = "/register"
 		AuthLogin    = "/login"
 	)
 
 	router := gin.Default()
+	apiGroup := router.Group("/api/v1")
 
-	router.POST(AuthRegister, handlers.AuthHandler.Register)
-	router.POST(AuthLogin, handlers.AuthHandler.Login)
+	publicRoutes := apiGroup.Group("/")
+
+	publicRoutes.POST(AuthRegister, handlers.AuthHandler.Register)
+	publicRoutes.POST(AuthLogin, handlers.AuthHandler.Login)
+	publicRoutes.POST(IssueTokens, handlers.AuthHandler.IssueTokens)
 
 	return router
 }

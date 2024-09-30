@@ -12,6 +12,7 @@ import (
 type AuthService interface {
 	Register(ctx context.Context, user model.User) (*dto.AuthResponse, error)
 	Login(ctx context.Context, user model.User) (*dto.AuthResponse, error)
+	IssueTokens(ctx context.Context, refreshToken string) (*dto.AuthResponse, error)
 }
 
 type AuthHandlerImpl struct {
@@ -50,6 +51,22 @@ func (a *AuthHandlerImpl) Login(c *gin.Context) {
 	user := mapper.FromLoginUserDTOToModel(loginDto)
 	ctx := c.Request.Context()
 	authResponse, err := a.authService.Login(ctx, user)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, authResponse)
+}
+
+func (a *AuthHandlerImpl) IssueTokens(c *gin.Context) {
+	var issueTokenPayload dto.IssueTokens
+	if err := c.ShouldBindJSON(&issueTokenPayload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx := c.Request.Context()
+	authResponse, err := a.authService.IssueTokens(ctx, issueTokenPayload.RefreshToken)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return

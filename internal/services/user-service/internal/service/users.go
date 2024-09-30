@@ -24,17 +24,17 @@ func NewUsersService(usersRepo UsersRepo, ctxTimeout time.Duration) *UsersServic
 }
 
 func (u *UsersService) FindById(ctx context.Context, id string) (*model.User, error) {
-	ctxWithTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	ctxTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
-	return u.usersRepo.FindById(ctxWithTimeout, id)
+	return u.usersRepo.FindById(ctxTimeout, id)
 }
 
 func (u *UsersService) FindByEmail(ctx context.Context, email string) (*model.User, error) {
-	ctxWithTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
+	ctxTimeout, cancel := context.WithTimeout(ctx, u.ctxTimeout)
 	defer cancel()
 
-	return u.usersRepo.FindByEmail(ctxWithTimeout, email)
+	return u.usersRepo.FindByEmail(ctxTimeout, email)
 }
 
 func (u *UsersService) Save(ctx context.Context, user model.User) error {

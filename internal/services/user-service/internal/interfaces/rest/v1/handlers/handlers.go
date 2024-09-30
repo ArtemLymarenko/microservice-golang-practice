@@ -17,6 +17,7 @@ type Storage interface {
 type AuthHandler interface {
 	Register(c *gin.Context)
 	Login(c *gin.Context)
+	IssueTokens(c *gin.Context)
 }
 
 type Handlers struct {

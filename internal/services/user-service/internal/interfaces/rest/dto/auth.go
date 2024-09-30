@@ -18,3 +18,7 @@ type AuthResponse struct {
 	RefreshToken     string `json:"refreshToken"`
 	RefreshExpiresIn string `json:"refreshExpiresIn"`
 }
+
+type IssueTokens struct {
+	RefreshToken string `json:"refreshToken" binding:"required"`
+}
