@@ -4,11 +4,12 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
+	appUtil "project-management-system/internal/pkg/app"
 	"project-management-system/internal/pkg/storage"
 	"project-management-system/internal/user-service/internal/app"
 	"project-management-system/internal/user-service/internal/config"
-	v1 "project-management-system/internal/user-service/internal/interfaces/rest/v1"
-	v1Handlers "project-management-system/internal/user-service/internal/interfaces/rest/v1/handlers"
+	v1 "project-management-system/internal/user-service/internal/interface/rest/v1"
+	v1Handlers "project-management-system/internal/user-service/internal/interface/rest/v1/handlers"
 )
 
 func main() {
@@ -28,7 +29,7 @@ func main() {
 
 	router := v1.InitializeRouter(handlers)
 
-	path, err := app.BuildHttpPath(cfg.HttpServer.Addr, cfg.HttpServer.Port)
+	path, err := appUtil.BuildHttpPath(cfg.HttpServer.Addr, cfg.HttpServer.Port)
 	if err != nil {
 		logrus.Fatal(err.Error())
 		os.Exit(1)

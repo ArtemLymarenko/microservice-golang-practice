@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"project-management-system/internal/user-service/internal/config"
 	"project-management-system/internal/user-service/internal/domain/model"
-	"project-management-system/internal/user-service/internal/interfaces/rest/dto"
+	"project-management-system/internal/user-service/internal/interface/rest/dto"
 	jwtService "project-management-system/internal/user-service/pkg/jwt-service"
 	"time"
 )

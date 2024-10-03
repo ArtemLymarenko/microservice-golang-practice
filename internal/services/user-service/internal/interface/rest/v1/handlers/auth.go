@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"project-management-system/internal/user-service/internal/domain/model"
-	"project-management-system/internal/user-service/internal/interfaces/mapper"
-	"project-management-system/internal/user-service/internal/interfaces/rest/dto"
+	"project-management-system/internal/user-service/internal/interface/mapper"
+	"project-management-system/internal/user-service/internal/interface/rest/dto"
 )
 
 type AuthService interface {

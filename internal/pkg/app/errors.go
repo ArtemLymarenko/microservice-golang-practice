@@ -1,4 +1,4 @@
-package app
+package appUtil
 
 import "errors"
 

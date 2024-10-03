@@ -18,7 +18,20 @@ type HttpServer struct {
 	IdleTimeout time.Duration `yaml:"idleTimeout"`
 }
 
+func requireConfigPath(env commonconfig.Env) string {
+	switch env {
+	case commonconfig.EnvLocal:
+		return "resources/config/local.yaml"
+	case commonconfig.EnvDev:
+		return "resources/config/local.yaml"
+	case commonconfig.EnvProd:
+		return "resources/config/local.yaml"
+	default:
+		return ""
+	}
+}
+
 func New() *Config {
-	const configPath = "configs/configs.yaml"
+	var configPath = requireConfigPath(commonconfig.EnvLocal)
 	return commonconfig.MustGet[Config](configPath)
 }

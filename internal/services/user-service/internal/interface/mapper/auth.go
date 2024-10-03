@@ -2,7 +2,7 @@ package mapper
 
 import (
 	"project-management-system/internal/user-service/internal/domain/model"
-	"project-management-system/internal/user-service/internal/interfaces/rest/dto"
+	"project-management-system/internal/user-service/internal/interface/rest/dto"
 )
 
 func FromRegisterUserDTOToModel(registerDTO dto.RegisterUserRequest) model.User {

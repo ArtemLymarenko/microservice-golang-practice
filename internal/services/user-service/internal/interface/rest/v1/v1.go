@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"project-management-system/internal/user-service/internal/interfaces/rest/v1/handlers"
+	"project-management-system/internal/user-service/internal/interface/rest/v1/handlers"
 )
 
 const (
