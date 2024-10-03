@@ -19,7 +19,7 @@ type UsersServ interface {
 
 type JWTServ interface {
 	Generate(userId string, expirationTime time.Duration) (string, error)
-	GenerateTokenAsync(userId string, exp time.Duration, tokenChan chan string)
+	GenerateTokenAsync(userId string, exp time.Duration) chan string
 	Verify(tokenToCheck string) (*jwtService.Claims, error)
 }
 
@@ -116,13 +116,10 @@ func (a *AuthService) IssueTokens(ctx context.Context, refreshToken string) (*dt
 func (a *AuthService) generateTokens(
 	sub string,
 ) (*dto.AuthResponse, error) {
-	accessChan := make(chan string)
-	refreshChan := make(chan string)
+	accessChan := a.jwtService.GenerateTokenAsync(sub, a.jwtConfig.AccessExp)
+	refreshChan := a.jwtService.GenerateTokenAsync(sub, a.jwtConfig.RefreshExp)
 	defer close(accessChan)
 	defer close(refreshChan)
-
-	go a.jwtService.GenerateTokenAsync(sub, a.jwtConfig.AccessExp, accessChan)
-	go a.jwtService.GenerateTokenAsync(sub, a.jwtConfig.RefreshExp, refreshChan)
 
 	accessToken, refreshToken := <-accessChan, <-refreshChan
 	if accessToken == "" || refreshToken == "" {

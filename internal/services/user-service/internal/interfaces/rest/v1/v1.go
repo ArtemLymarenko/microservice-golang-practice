@@ -5,6 +5,11 @@ import (
 	"project-management-system/internal/user-service/internal/interfaces/rest/v1/handlers"
 )
 
+const (
+	Root  = "/"
+	ApiV1 = "/api/v1"
+)
+
 func InitializeRouter(handlers *handlers.Handlers) *gin.Engine {
 	const (
 		IssueTokens  = "/issue-tokens"
@@ -13,10 +18,9 @@ func InitializeRouter(handlers *handlers.Handlers) *gin.Engine {
 	)
 
 	router := gin.Default()
-	apiGroup := router.Group("/api/v1")
+	apiV1Routes := router.Group(ApiV1)
 
-	publicRoutes := apiGroup.Group("/")
-
+	publicRoutes := apiV1Routes.Group(Root)
 	publicRoutes.POST(AuthRegister, handlers.AuthHandler.Register)
 	publicRoutes.POST(AuthLogin, handlers.AuthHandler.Login)
 	publicRoutes.POST(IssueTokens, handlers.AuthHandler.IssueTokens)

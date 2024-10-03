@@ -37,14 +37,19 @@ func (jwts JWTService) Generate(userId string, expirationTime time.Duration) (st
 func (jwts JWTService) GenerateTokenAsync(
 	userId string,
 	exp time.Duration,
-	tokenChan chan string,
-) {
-	token, err := jwts.Generate(userId, exp)
-	if err != nil {
-		return
-	}
+) chan string {
+	tokenChan := make(chan string)
+	go func() {
+		token, err := jwts.Generate(userId, exp)
+		if err != nil {
+			tokenChan <- ""
+			return
+		}
 
-	tokenChan <- token
+		tokenChan <- token
+	}()
+
+	return tokenChan
 }
 
 func (jwts JWTService) Verify(token string) (*Claims, error) {
