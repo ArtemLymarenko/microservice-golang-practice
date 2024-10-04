@@ -51,11 +51,11 @@ func (a *AuthService) Register(ctx context.Context, user model.User) (*dto.AuthR
 	id := uuid.New().String()
 	user.SetId(id)
 
-	password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost+bcrypt.MinCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost+bcrypt.MinCost)
 	if err != nil {
 		return nil, ErrHashingPassword
 	}
-	user.SetPassword(string(password))
+	user.SetPassword(string(hashedPassword))
 
 	err = a.usersService.Save(ctxTimeout, user)
 	if err != nil {

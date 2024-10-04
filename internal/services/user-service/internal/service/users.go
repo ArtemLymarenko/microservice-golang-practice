@@ -46,8 +46,10 @@ func (u *UsersService) Save(ctx context.Context, user model.User) error {
 		user.SetId(id.String())
 	}
 
-	user.SetCreatedAt()
-	user.UserInfo.SetCreatedAt()
+	user.SetCreatedAt(time.Now())
+	user.SetUpdatedAt(time.Now())
+	user.UserInfo.SetCreatedAt(time.Now())
+	user.UserInfo.SetUpdatedAt(time.Now())
 
 	return u.usersRepo.Save(ctxWithTimeout, user)
 }

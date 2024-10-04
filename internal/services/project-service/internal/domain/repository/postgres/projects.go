@@ -24,9 +24,7 @@ func (p *ProjectsRepository) findOne(
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		_ = stmt.Close()
-	}()
+	defer stmt.Close()
 
 	project := model.Project{}
 	err = stmt.QueryRowContext(ctx, args...).Scan(
@@ -34,7 +32,6 @@ func (p *ProjectsRepository) findOne(
 		&project.Name,
 		&project.Description,
 		&project.Status,
-		&project.UpdatedAt,
 		&project.ProductionStartAt,
 		&project.ProductionEndAt,
 		&project.CreatedAt,
@@ -47,4 +44,11 @@ func (p *ProjectsRepository) findOne(
 	}
 
 	return &project, nil
+}
+
+func (p *ProjectsRepository) findById(ctx context.Context, id string) (*model.Project, error) {
+	query := `SELECT 
+    	p.id, p.name, p.description, p.status, p.production_start_at, p.production_end_at, p.created_at, p.updated_at, p.archived_at
+		FROM projects AS p WHERE p.id=$1`
+	return p.findOne(ctx, query, id)
 }

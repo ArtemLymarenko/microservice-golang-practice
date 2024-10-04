@@ -21,7 +21,6 @@ func (u *UserInfo) SetUpdatedAt(updatedAt time.Time) {
 	u.UpdatedAt = updatedAt
 }
 
-func (u *UserInfo) SetCreatedAt() {
-	u.CreatedAt = time.Now()
-	u.SetUpdatedAt(time.Now())
+func (u *UserInfo) SetCreatedAt(createdAt time.Time) {
+	u.CreatedAt = createdAt
 }
