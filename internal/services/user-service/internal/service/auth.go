@@ -11,13 +11,13 @@ import (
 	"time"
 )
 
-type UsersServ interface {
+type IUsersService interface {
 	FindById(ctx context.Context, id string) (*model.User, error)
 	FindByEmail(ctx context.Context, email string) (*model.User, error)
 	Save(ctx context.Context, user model.User) error
 }
 
-type JWTServ interface {
+type IJWTService interface {
 	Generate(userId string, expirationTime time.Duration) (string, error)
 	GenerateTokenAsync(userId string, exp time.Duration) chan string
 	Verify(tokenToCheck string) (*jwtService.Claims, error)
@@ -25,15 +25,15 @@ type JWTServ interface {
 
 type AuthService struct {
 	jwtConfig    config.JWT
-	usersService UsersServ
-	jwtService   JWTServ
+	usersService IUsersService
+	jwtService   IJWTService
 	ctxTimeout   time.Duration
 }
 
 func NewAuthService(
 	jwtConfig config.JWT,
-	usersService UsersServ,
-	jwtService JWTServ,
+	usersService IUsersService,
+	jwtService IJWTService,
 	ctxTimeout time.Duration,
 ) *AuthService {
 	return &AuthService{

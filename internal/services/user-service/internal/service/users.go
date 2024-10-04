@@ -8,18 +8,18 @@ import (
 	"time"
 )
 
-type UsersRepo interface {
+type UsersRepository interface {
 	FindById(ctx context.Context, id string) (*model.User, error)
 	FindByEmail(ctx context.Context, email string) (*model.User, error)
 	Save(ctx context.Context, user model.User) error
 }
 
 type UsersService struct {
-	usersRepo  UsersRepo
+	usersRepo  UsersRepository
 	ctxTimeout time.Duration
 }
 
-func NewUsersService(usersRepo UsersRepo, ctxTimeout time.Duration) *UsersService {
+func NewUsersService(usersRepo UsersRepository, ctxTimeout time.Duration) *UsersService {
 	return &UsersService{usersRepo, ctxTimeout}
 }
 

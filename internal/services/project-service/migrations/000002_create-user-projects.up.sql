@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS projects_users (
+    project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    user_id UUID NOT NULL
+);
