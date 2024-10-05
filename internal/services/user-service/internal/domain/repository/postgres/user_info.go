@@ -20,7 +20,9 @@ func NewUserInfoRepository(db *sql.DB) *UserInfoRepository {
 }
 
 func (r *UserInfoRepository) Save(ctx context.Context, userId string, userInfo model.UserInfo) error {
-	saveUserInfoQuery := `INSERT INTO user_info(user_id, first_name, last_name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)`
+	saveUserInfoQuery := `INSERT INTO 
+    	user_info(user_id, first_name, last_name, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5)`
 	_, err := r.db.ExecContext(ctx, saveUserInfoQuery,
 		userId,
 		userInfo.FirstName,

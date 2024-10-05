@@ -28,8 +28,3 @@ func (u *User) SetUpdatedAt(updatedAt time.Time) {
 func (u *User) SetCreatedAt(createdAt time.Time) {
 	u.CreatedAt = createdAt
 }
-
-func (u *User) SetUserInfo(firstName, lastName string) {
-	u.UserInfo.SetFirstName(firstName)
-	u.UserInfo.SetLastName(lastName)
-}
