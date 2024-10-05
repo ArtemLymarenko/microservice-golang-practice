@@ -1,7 +1,7 @@
 CREATE TYPE project_status AS ENUM ('active', 'closed', 'idle');
 
 CREATE TABLE IF NOT EXISTS projects (
-    id UUID PRIMARY KEY NOT NULL,
+    id UUID PRIMARY KEY NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
     description TEXT NULL,
     status project_status NOT NULL DEFAULT 'idle',
