@@ -1,3 +1,5 @@
+app:
+  codeName: ${APP_CODENAME}
 env: local
 postgres:
   user: ${DB_USER}
@@ -13,3 +15,7 @@ httpServer:
   port: ${SERVER_PORT}
   timeout: 4s
   idleTimeout: 60s
+service:
+  timeout: 5s
+jwt:
+  secret: ${JWT_SECRET}

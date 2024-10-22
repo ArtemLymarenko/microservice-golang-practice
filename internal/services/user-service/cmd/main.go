@@ -27,7 +27,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	router := v1.InitializeRouter(handlers)
+	router := v1.GetGinRouter(handlers)
 
 	path, err := appUtil.BuildHttpPath(cfg.HttpServer.Addr, cfg.HttpServer.Port)
 	if err != nil {

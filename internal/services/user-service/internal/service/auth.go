@@ -4,36 +4,35 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	jwtService "project-management-system/internal/pkg/jwt-service"
 	"project-management-system/internal/user-service/internal/config"
 	"project-management-system/internal/user-service/internal/domain/model"
 	"project-management-system/internal/user-service/internal/interface/rest/dto"
-	jwtService "project-management-system/internal/user-service/pkg/jwt-service"
 	"time"
 )
 
-type IUsersService interface {
+type UsersServ interface {
 	FindById(ctx context.Context, id string) (*model.User, error)
 	FindByEmail(ctx context.Context, email string) (*model.User, error)
 	Save(ctx context.Context, user model.User) error
 }
 
-type IJWTService interface {
-	Generate(userId string, expirationTime time.Duration) (string, error)
+type JWTService interface {
 	GenerateTokenAsync(userId string, exp time.Duration) chan string
-	Verify(tokenToCheck string) (*jwtService.Claims, error)
+	Verify(token string) (*jwtService.Claims, error)
 }
 
 type AuthService struct {
 	jwtConfig    config.JWT
-	usersService IUsersService
-	jwtService   IJWTService
+	jwtService   JWTService
+	usersService UsersServ
 	ctxTimeout   time.Duration
 }
 
 func NewAuthService(
 	jwtConfig config.JWT,
-	usersService IUsersService,
-	jwtService IJWTService,
+	jwtService JWTService,
+	usersService UsersServ,
 	ctxTimeout time.Duration,
 ) *AuthService {
 	return &AuthService{

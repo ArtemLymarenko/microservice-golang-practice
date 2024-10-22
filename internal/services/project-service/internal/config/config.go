@@ -6,9 +6,12 @@ import (
 )
 
 type Config struct {
+	App        App              `json:"app"`
 	Env        commonconfig.Env `yaml:"env"`
 	Postgres   Postgres         `yaml:"postgres"`
 	HttpServer HttpServer       `yaml:"httpServer"`
+	Service    Service          `yaml:"service"`
+	JWT        JWT              `yaml:"jwt"`
 }
 
 type HttpServer struct {
@@ -16,6 +19,18 @@ type HttpServer struct {
 	Port        int           `yaml:"port"`
 	Timeout     time.Duration `yaml:"timeout"`
 	IdleTimeout time.Duration `yaml:"idleTimeout"`
+}
+
+type Service struct {
+	Timeout time.Duration `yaml:"timeout"`
+}
+
+type JWT struct {
+	Secret string `yaml:"secret"`
+}
+
+type App struct {
+	CodeName string `yaml:"codeName"`
 }
 
 func requireConfigPath(env commonconfig.Env) string {

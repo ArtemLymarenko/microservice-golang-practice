@@ -1,20 +1,20 @@
-package model
+package project
 
 import "time"
 
-type ProjectStatus string
+type Status string
 
 const (
-	ProjectIdle   ProjectStatus = "idle"
-	ProjectActive ProjectStatus = "active"
-	ProjectClosed ProjectStatus = "closed"
+	Idle   Status = "idle"
+	Active Status = "active"
+	Closed Status = "closed"
 )
 
 type Project struct {
 	Id                string
 	Name              string
 	Description       string
-	Status            ProjectStatus
+	Status            Status
 	ProductionStartAt time.Time
 	ProductionEndAt   time.Time
 	CreatedAt         time.Time

@@ -14,19 +14,19 @@ type JWTService struct {
 	issuer string
 }
 
-func New(secret string, issuer string) JWTService {
-	return JWTService{secret, issuer}
+func New(secret, issuer string) *JWTService {
+	return &JWTService{secret, issuer}
 }
 
-func (jwts JWTService) Generate(userId string, expirationTime time.Duration) (string, error) {
+func (jwtService *JWTService) Generate(userId string, exp time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		Subject:   userId,
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expirationTime)),
-		Issuer:    jwts.issuer,
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(exp)),
+		Issuer:    jwtService.issuer,
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 	})
 
-	signedToken, err := token.SignedString([]byte(jwts.secret))
+	signedToken, err := token.SignedString([]byte(jwtService.secret))
 	if err != nil {
 		return "", err
 	}
@@ -34,13 +34,13 @@ func (jwts JWTService) Generate(userId string, expirationTime time.Duration) (st
 	return signedToken, nil
 }
 
-func (jwts JWTService) GenerateTokenAsync(
+func (jwtService *JWTService) GenerateTokenAsync(
 	userId string,
 	exp time.Duration,
 ) chan string {
 	tokenChan := make(chan string)
 	go func() {
-		token, err := jwts.Generate(userId, exp)
+		token, err := jwtService.Generate(userId, exp)
 		if err != nil {
 			tokenChan <- ""
 			return
@@ -52,9 +52,9 @@ func (jwts JWTService) GenerateTokenAsync(
 	return tokenChan
 }
 
-func (jwts JWTService) Verify(token string) (*Claims, error) {
+func (jwtService *JWTService) Verify(token string) (*Claims, error) {
 	parsedToken, err := jwt.ParseWithClaims(token, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(jwts.secret), nil
+		return []byte(jwtService.secret), nil
 	})
 
 	if err != nil {

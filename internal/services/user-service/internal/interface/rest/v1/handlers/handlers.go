@@ -3,10 +3,10 @@ package handlers
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
+	jwtService "project-management-system/internal/pkg/jwt-service"
 	"project-management-system/internal/user-service/internal/config"
 	"project-management-system/internal/user-service/internal/domain/repository/postgres"
 	"project-management-system/internal/user-service/internal/service"
-	jwtService "project-management-system/internal/user-service/pkg/jwt-service"
 	"time"
 )
 
@@ -34,12 +34,11 @@ func New(storage Storage, serviceTimeout time.Duration, cfg *config.Config) (*Ha
 	userInfoRepo := postgres.NewUserInfoRepository(connection)
 	usersRepo := postgres.NewUsersRepository(connection, userInfoRepo)
 
-	//third-party
 	jwtServ := jwtService.New(cfg.JWT.Secret, cfg.App.CodeName)
 
 	//services
 	userService := service.NewUsersService(usersRepo, serviceTimeout)
-	authService := service.NewAuthService(cfg.JWT, userService, jwtServ, serviceTimeout)
+	authService := service.NewAuthService(cfg.JWT, jwtServ, userService, serviceTimeout)
 
 	return &Handlers{
 		AuthHandler: NewAuthHandler(authService),

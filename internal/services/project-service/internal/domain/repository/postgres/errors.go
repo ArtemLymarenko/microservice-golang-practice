@@ -3,7 +3,7 @@ package postgres
 import "errors"
 
 var (
-	ErrQueryRowWithContext = errors.New("error querying row with context")
-	ErrExecWithContext     = errors.New("error exec with context")
-	ErrCommitTrx           = errors.New("error commiting transaction")
+	ErrQueryRowWithContext = errors.New("failed to query project data")
+	ErrProjectNotFound     = errors.New("project was not found")
+	ErrCommitTrx           = errors.New("failed to finish transaction")
 )
