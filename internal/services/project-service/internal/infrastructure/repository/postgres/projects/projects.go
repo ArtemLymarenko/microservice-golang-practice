@@ -1,4 +1,4 @@
-package postgres
+package projectsPostgres
 
 import (
 	"context"
@@ -11,6 +11,7 @@ var (
 	ErrProjectNotFound = errors.New("project was not found")
 	ErrSaveProject     = errors.New("failed to save project")
 	ErrDeleteProject   = errors.New("failed to delete project")
+	ErrUpdateProject   = errors.New("failed to update project")
 )
 
 type projectDB interface {
@@ -22,7 +23,7 @@ type ProjectRepository struct {
 	db projectDB
 }
 
-func NewProjectRepository(db projectDB) *ProjectRepository {
+func New(db projectDB) *ProjectRepository {
 	return &ProjectRepository{db}
 }
 
@@ -93,6 +94,42 @@ func (p *ProjectRepository) Save(ctx context.Context, project project.Project) e
 	}
 
 	return err
+}
+
+func (p *ProjectRepository) UpdateById(ctx context.Context, project project.Project) error {
+	updateProjectQuery := `
+		UPDATE projects 
+		SET 
+			name = $1, 
+			description = $2, 
+			status = $3, 
+			production_start_at = $4, 
+			production_end_at = $5, 
+			created_at = $6,
+			updated_at = $7,
+			archived_at = $8
+		WHERE id = $9;
+	`
+
+	_, err := p.db.ExecContext(
+		ctx,
+		updateProjectQuery,
+		project.Name,
+		project.Description,
+		project.Status,
+		project.ProductionStartAt,
+		project.ProductionEndAt,
+		project.CreatedAt,
+		project.UpdatedAt,
+		project.ArchivedAt,
+		project.Id,
+	)
+
+	if err != nil {
+		return ErrUpdateProject
+	}
+
+	return nil
 }
 
 func (p *ProjectRepository) DeleteById(ctx context.Context, projectId project.Id) error {

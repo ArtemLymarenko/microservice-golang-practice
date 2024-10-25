@@ -1,10 +1,14 @@
-package postgres
+package projectUserPostgres
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
+	"project-management-system/internal/project-service/internal/domain/entity/role"
+	"project-management-system/internal/project-service/internal/domain/entity/user"
+	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
+	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres/projects"
 )
 
 var (
@@ -13,7 +17,7 @@ var (
 
 type ProjectsRepo interface {
 	Save(ctx context.Context, project project.Project) error
-	WithTx(tx *sql.Tx) *ProjectRepository
+	WithTx(tx *sql.Tx) *projectsPostgres.ProjectRepository
 }
 
 type ProjectUserRepository struct {
@@ -21,7 +25,7 @@ type ProjectUserRepository struct {
 	projectsRepo ProjectsRepo
 }
 
-func NewProjectUserRepository(
+func New(
 	db *sql.DB,
 	projectsRepo ProjectsRepo,
 ) *ProjectUserRepository {
@@ -38,7 +42,7 @@ func (pu *ProjectUserRepository) SaveProjectWithUser(
 ) error {
 	tx, err := pu.db.BeginTx(ctx, nil)
 	if err != nil {
-		return ErrFinishTx
+		return postgres.ErrFinishTx
 	}
 	defer func() {
 		if err != nil {
@@ -61,12 +65,31 @@ func (pu *ProjectUserRepository) SaveProjectWithUser(
 
 	err = tx.Commit()
 	if err != nil {
-		return ErrFinishTx
+		return postgres.ErrFinishTx
 	}
 
 	return nil
 }
 
-func (pu *ProjectUserRepository) FindUserRole(ctx context.Context, projectId project.Id) {
+func (pu *ProjectUserRepository) AddUsersToProject(
+	ctx context.Context,
+	projectId project.Id,
+	userIds []user.Id,
+) error {
+	return nil
+}
 
+func (pu *ProjectUserRepository) FindProjectUsers(
+	ctx context.Context,
+	projectId project.Id,
+) []user.Id {
+	return nil
+}
+
+func (pu *ProjectUserRepository) FindUserRoleInProject(
+	ctx context.Context,
+	userId user.Id,
+	projectId project.Id,
+) role.Role {
+	return role.Role("")
 }

@@ -1,9 +1,10 @@
-package service
+package projectService
 
 import (
 	"context"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
 	"project-management-system/internal/project-service/internal/domain/repository/persistent"
+	"project-management-system/internal/project-service/internal/service"
 )
 
 type ProjectService struct {
@@ -11,7 +12,7 @@ type ProjectService struct {
 	projectUserTxRepository persistent.ProjectUserRepository
 }
 
-func NewProjectService(
+func New(
 	projectsRepo persistent.ProjectRepository,
 	projectUserRepository persistent.ProjectUserRepository,
 ) *ProjectService {
@@ -22,7 +23,7 @@ func NewProjectService(
 }
 
 func (p *ProjectService) GetById(ctx context.Context, id string) (*project.Project, error) {
-	ctxWithTimeout, cancel := context.WithTimeout(ctx, TIMEOUT)
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, service.TIMEOUT)
 	defer cancel()
 
 	return p.projectsRepo.FindById(ctxWithTimeout, id)
@@ -33,7 +34,7 @@ func (p *ProjectService) AddProjectWithOwner(
 	creatorId string,
 	project project.Project,
 ) error {
-	ctxWithTimeout, cancel := context.WithTimeout(ctx, TIMEOUT)
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, service.TIMEOUT)
 	defer cancel()
 
 	//Some validation

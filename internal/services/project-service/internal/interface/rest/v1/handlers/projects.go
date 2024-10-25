@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
-	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
+	projectsPostgres "project-management-system/internal/project-service/internal/infrastructure/repository/postgres/projects"
 	"project-management-system/internal/project-service/internal/interface/rest/dto"
 )
 
@@ -31,7 +31,7 @@ func (handler *ProjectsHandlerImpl) GetProjectById(c *gin.Context) {
 
 	found, err := handler.projectService.GetById(c.Request.Context(), id)
 	if err != nil {
-		if errors.Is(err, postgres.ErrProjectNotFound) {
+		if errors.Is(err, projectsPostgres.ErrProjectNotFound) {
 			c.JSON(http.StatusNotFound, dto.NewResponseErr(err))
 			return
 		}
