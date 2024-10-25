@@ -3,18 +3,23 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"project-management-system/internal/project-service/internal/domain/model/project"
+	"project-management-system/internal/project-service/internal/domain/entity/project"
 )
 
-type ProjectsRepository struct {
-	db *sql.DB
+type projectDB interface {
+	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
 }
 
-func NewProjectsRepository(db *sql.DB) *ProjectsRepository {
-	return &ProjectsRepository{db}
+type ProjectRepository struct {
+	db projectDB
 }
 
-func (p *ProjectsRepository) findOne(
+func NewProjectsRepository(db projectDB) *ProjectRepository {
+	return &ProjectRepository{db}
+}
+
+func (p *ProjectRepository) findOne(
 	ctx context.Context,
 	query string,
 	args ...interface{},
@@ -45,7 +50,7 @@ func (p *ProjectsRepository) findOne(
 	return &found, nil
 }
 
-func (p *ProjectsRepository) FindById(ctx context.Context, id string) (*project.Project, error) {
+func (p *ProjectRepository) FindById(ctx context.Context, id string) (*project.Project, error) {
 	query := `SELECT 
     	p.id, p.name, p.description, p.status, p.production_start_at, p.production_end_at, p.created_at, p.updated_at, p.archived_at
 		FROM projects AS p WHERE p.id=$1`
@@ -58,23 +63,12 @@ func (p *ProjectsRepository) FindById(ctx context.Context, id string) (*project.
 	return found, nil
 }
 
-func (p *ProjectsRepository) SaveByUser(ctx context.Context, userId string, project project.Project) error {
-	tx, err := p.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if err != nil {
-			_ = tx.Rollback()
-		}
-	}()
-
+func (p *ProjectRepository) Save(ctx context.Context, project project.Project) error {
 	saveProjectQuery := `INSERT INTO 
     	projects(id, name, description, status, production_start_at, production_end_at, created_at, updated_at, archived_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 
-	_, err = tx.ExecContext(
+	_, err := p.db.ExecContext(
 		ctx,
 		saveProjectQuery,
 		project.Id,
@@ -87,27 +81,10 @@ func (p *ProjectsRepository) SaveByUser(ctx context.Context, userId string, proj
 		project.UpdatedAt,
 		project.ArchivedAt,
 	)
-	if err != nil {
-		return ErrCommitTrx
-	}
 
-	saveProjectUserQuery := `INSERT INTO 
-    	projects_users(project_id, user_id)
-		VALUES ($1, $2)`
+	return err
+}
 
-	_, err = tx.ExecContext(
-		ctx,
-		saveProjectUserQuery,
-		project.Id,
-		userId,
-	)
-	if err != nil {
-		return err
-	}
-
-	if err = tx.Commit(); err != nil {
-		return ErrCommitTrx
-	}
-
-	return nil
+func (p *ProjectRepository) WithTx(tx *sql.Tx) *ProjectRepository {
+	return &ProjectRepository{tx}
 }

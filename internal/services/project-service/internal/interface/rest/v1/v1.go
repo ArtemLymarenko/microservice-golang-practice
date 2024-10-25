@@ -35,10 +35,10 @@ func MustGetGinRouter(storage Storage, cfg *config.Config) *gin.Engine {
 
 	jwtServ := jwtService.New(cfg.JWT.Secret, cfg.App.CodeName)
 
-	apiV1Routes := router.Group(ApiV1)
-	apiV1Routes.Use(middleware.Auth(jwtServ))
+	apiPrivateV1Routes := router.Group(ApiV1)
+	apiPrivateV1Routes.Use(middleware.Auth(jwtServ))
 	{
-		projects := apiV1Routes.Group(Projects)
+		projects := apiPrivateV1Routes.Group(Projects)
 		{
 			projects.GET(GetById, handlers.ProjectHandler.GetProjectById)
 		}
