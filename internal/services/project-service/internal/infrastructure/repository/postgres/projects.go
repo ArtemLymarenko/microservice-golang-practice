@@ -3,7 +3,14 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
+)
+
+var (
+	ErrProjectNotFound = errors.New("project was not found")
+	ErrSaveProject     = errors.New("failed to save project")
+	ErrDeleteProject   = errors.New("failed to delete project")
 )
 
 type projectDB interface {
@@ -17,6 +24,10 @@ type ProjectRepository struct {
 
 func NewProjectRepository(db projectDB) *ProjectRepository {
 	return &ProjectRepository{db}
+}
+
+func (p *ProjectRepository) WithTx(tx *sql.Tx) *ProjectRepository {
+	return &ProjectRepository{tx}
 }
 
 func (p *ProjectRepository) findOne(
@@ -44,7 +55,7 @@ func (p *ProjectRepository) findOne(
 	)
 
 	if err != nil {
-		return nil, ErrQueryRowWithContext
+		return nil, ErrProjectNotFound
 	}
 
 	return &found, nil
@@ -55,12 +66,7 @@ func (p *ProjectRepository) FindById(ctx context.Context, id string) (*project.P
     	p.id, p.name, p.description, p.status, p.production_start_at, p.production_end_at, p.created_at, p.updated_at, p.archived_at
 		FROM projects AS p WHERE p.id=$1`
 
-	found, err := p.findOne(ctx, query, id)
-	if err != nil {
-		return nil, ErrProjectNotFound
-	}
-
-	return found, nil
+	return p.findOne(ctx, query, id)
 }
 
 func (p *ProjectRepository) Save(ctx context.Context, project project.Project) error {
@@ -82,9 +88,25 @@ func (p *ProjectRepository) Save(ctx context.Context, project project.Project) e
 		project.ArchivedAt,
 	)
 
+	if err != nil {
+		return ErrSaveProject
+	}
+
 	return err
 }
 
-func (p *ProjectRepository) WithTx(tx *sql.Tx) *ProjectRepository {
-	return &ProjectRepository{tx}
+func (p *ProjectRepository) DeleteById(ctx context.Context, projectId project.Id) error {
+	deleteProjectQuery := `DELETE FROM projects WHERE id=$1`
+
+	_, err := p.db.ExecContext(
+		ctx,
+		deleteProjectQuery,
+		projectId,
+	)
+
+	if err != nil {
+		return ErrDeleteProject
+	}
+
+	return err
 }

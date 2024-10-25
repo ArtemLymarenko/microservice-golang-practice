@@ -3,7 +3,12 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
+)
+
+var (
+	ErrSaveProjectWithUser = errors.New("failed to save project with user")
 )
 
 type ProjectsRepo interface {
@@ -33,7 +38,7 @@ func (pu *ProjectUserRepository) SaveProjectWithUser(
 ) error {
 	tx, err := pu.db.BeginTx(ctx, nil)
 	if err != nil {
-		return ErrCommitTrx
+		return ErrFinishTx
 	}
 	defer func() {
 		if err != nil {
@@ -51,13 +56,17 @@ func (pu *ProjectUserRepository) SaveProjectWithUser(
 		VALUES ($1, $2)`
 	_, err = tx.ExecContext(ctx, saveProjectUserQuery, project.Id, userId)
 	if err != nil {
-		return err
+		return ErrSaveProjectWithUser
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return ErrCommitTrx
+		return ErrFinishTx
 	}
 
 	return nil
+}
+
+func (pu *ProjectUserRepository) FindUserRole(ctx context.Context, projectId project.Id) {
+
 }

@@ -10,10 +10,16 @@ const (
 	Closed Status = "closed"
 )
 
+type Id string
+
+type Name string
+
+type Description string
+
 type Project struct {
-	Id                string
-	Name              string
-	Description       string
+	Id                Id
+	Name              Name
+	Description       Description
 	Status            Status
 	ProductionStartAt time.Time
 	ProductionEndAt   time.Time

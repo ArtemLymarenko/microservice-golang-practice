@@ -1,6 +1,6 @@
 package dto
 
-import "project-management-system/internal/project-service/internal/domain/model/project"
+import "project-management-system/internal/project-service/internal/domain/entity/project"
 
 type CreateProjectResponse struct {
 	Id string `json:"id,omitempty"`
