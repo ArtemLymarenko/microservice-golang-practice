@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
-	"project-management-system/internal/project-service/internal/domain/repository/postgres"
+	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 	"project-management-system/internal/project-service/internal/interface/rest/dto"
 )
 

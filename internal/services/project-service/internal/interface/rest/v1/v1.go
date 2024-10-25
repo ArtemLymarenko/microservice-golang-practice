@@ -27,7 +27,7 @@ func MustGetGinRouter(storage Storage, cfg *config.Config) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	handlers, err := v1Handlers.New(storage, 5000, cfg)
+	handlers, err := v1Handlers.New(storage)
 	if err != nil {
 		logrus.Fatal(err.Error())
 		os.Exit(1)

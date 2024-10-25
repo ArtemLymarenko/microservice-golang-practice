@@ -1,37 +1,28 @@
-package postgresTx
+package postgres
 
 import (
 	"context"
 	"database/sql"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
-	"project-management-system/internal/project-service/internal/domain/repository/postgres"
 )
 
 type ProjectsRepo interface {
 	Save(ctx context.Context, project project.Project) error
-	WithTx(tx *sql.Tx) *postgres.ProjectRepository
-}
-
-type ProjectUserRepo interface {
-	Save(ctx context.Context, projectId string, userId string) error
-	WithTx(tx *sql.Tx) *postgres.ProjectUserRepository
+	WithTx(tx *sql.Tx) *ProjectRepository
 }
 
 type ProjectUserRepository struct {
-	db              *sql.DB
-	projectsRepo    ProjectsRepo
-	projectUserRepo ProjectUserRepo
+	db           *sql.DB
+	projectsRepo ProjectsRepo
 }
 
-func New(
+func NewProjectUserRepository(
 	db *sql.DB,
 	projectsRepo ProjectsRepo,
-	projectUserRepo ProjectUserRepo,
 ) *ProjectUserRepository {
 	return &ProjectUserRepository{
-		db:              db,
-		projectsRepo:    projectsRepo,
-		projectUserRepo: projectUserRepo,
+		db:           db,
+		projectsRepo: projectsRepo,
 	}
 }
 
@@ -55,7 +46,10 @@ func (pu *ProjectUserRepository) SaveProjectWithUser(
 		return err
 	}
 
-	err = pu.projectUserRepo.WithTx(tx).Save(ctx, project.Id, userId)
+	saveProjectUserQuery := `INSERT INTO 
+    	projects_users("project_id", "user_id")
+		VALUES ($1, $2)`
+	_, err = tx.ExecContext(ctx, saveProjectUserQuery, project.Id, userId)
 	if err != nil {
 		return err
 	}

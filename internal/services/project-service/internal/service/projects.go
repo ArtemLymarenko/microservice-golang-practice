@@ -3,32 +3,21 @@ package service
 import (
 	"context"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
+	"project-management-system/internal/project-service/internal/domain/repository/persistent"
 )
 
-type ProjectRepository interface {
-	FindById(ctx context.Context, id string) (*project.Project, error)
-}
-
-type ProjectUserTxRepository interface {
-	SaveProjectWithUser(
-		ctx context.Context,
-		userId string,
-		project project.Project,
-	) error
-}
-
 type ProjectService struct {
-	projectsRepo            ProjectRepository
-	projectUserTxRepository ProjectUserTxRepository
+	projectsRepo            persistent.ProjectRepository
+	projectUserTxRepository persistent.ProjectUserRepository
 }
 
 func NewProjectService(
-	projectsRepo ProjectRepository,
-	projectUserTxRepository ProjectUserTxRepository,
+	projectsRepo persistent.ProjectRepository,
+	projectUserRepository persistent.ProjectUserRepository,
 ) *ProjectService {
 	return &ProjectService{
 		projectsRepo:            projectsRepo,
-		projectUserTxRepository: projectUserTxRepository,
+		projectUserTxRepository: projectUserRepository,
 	}
 }
 
@@ -39,7 +28,7 @@ func (p *ProjectService) GetById(ctx context.Context, id string) (*project.Proje
 	return p.projectsRepo.FindById(ctxWithTimeout, id)
 }
 
-func (p *ProjectService) AddProjectWithCreator(
+func (p *ProjectService) AddProjectWithOwner(
 	ctx context.Context,
 	creatorId string,
 	project project.Project,
