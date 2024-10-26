@@ -28,8 +28,9 @@ func (handler *ProjectsHandlerImpl) GetProjectById(c *gin.Context) {
 	const param = "id"
 
 	id := c.Param(param)
+	ctx := c.Request.Context()
 
-	found, err := handler.projectService.GetById(c.Request.Context(), id)
+	found, err := handler.projectService.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, projectsPostgres.ErrProjectNotFound) {
 			c.JSON(http.StatusNotFound, dto.NewResponseErr(err))

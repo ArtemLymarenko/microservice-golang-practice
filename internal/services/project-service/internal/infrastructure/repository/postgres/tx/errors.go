@@ -1,4 +1,4 @@
-package postgres
+package tx
 
 import "errors"
 

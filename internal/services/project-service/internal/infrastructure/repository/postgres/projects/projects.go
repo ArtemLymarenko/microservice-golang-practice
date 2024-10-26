@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
+	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
 var (
@@ -14,21 +15,16 @@ var (
 	ErrUpdateProject   = errors.New("failed to update project")
 )
 
-type projectDB interface {
-	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
-	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
-}
-
 type ProjectRepository struct {
-	db projectDB
+	db postgres.DB
 }
 
-func New(db projectDB) *ProjectRepository {
+func New(db postgres.DB) *ProjectRepository {
 	return &ProjectRepository{db}
 }
 
 func (p *ProjectRepository) WithTx(tx *sql.Tx) *ProjectRepository {
-	return &ProjectRepository{tx}
+	return New(tx)
 }
 
 func (p *ProjectRepository) findOne(
