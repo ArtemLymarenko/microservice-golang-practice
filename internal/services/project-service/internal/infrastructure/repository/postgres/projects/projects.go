@@ -145,5 +145,5 @@ func (p *ProjectRepository) DeleteById(ctx context.Context, projectId project.Id
 		return ErrDeleteProject
 	}
 
-	return err
+	return nil
 }
