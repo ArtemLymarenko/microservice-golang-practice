@@ -1,5 +1,7 @@
 package service
 
-import "time"
+import (
+	"time"
+)
 
-const TIMEOUT time.Duration = 5000
+const TIMEOUT time.Duration = 5 * time.Second

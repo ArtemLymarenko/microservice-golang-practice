@@ -24,7 +24,7 @@ func Auth(jwtService JWTService) gin.HandlerFunc {
 		authHeader := c.GetHeader("Authorization")
 
 		bearer, token, found := strings.Cut(authHeader, " ")
-		if !found && bearer != "Bearer" || token == "" {
+		if !found || bearer != "Bearer" || token == "" {
 			c.JSON(http.StatusUnauthorized, dto.NewResponseErr(ErrFailedToGetToken))
 			c.Abort()
 			return
