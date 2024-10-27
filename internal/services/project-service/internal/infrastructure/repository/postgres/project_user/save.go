@@ -11,7 +11,7 @@ import (
 
 func (pu *ProjectUserRepository) SaveProjectWithOwner(
 	ctx context.Context,
-	userId user.Id,
+	ownerId user.Id,
 	project project.Project,
 ) error {
 	transaction := func(ctx context.Context, tx *sql.Tx) error {
@@ -23,7 +23,7 @@ func (pu *ProjectUserRepository) SaveProjectWithOwner(
 		}
 
 		ownerRole := valueobject.UserRole{
-			UserId: userId,
+			UserId: ownerId,
 			Role:   role.Owner,
 		}
 
