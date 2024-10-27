@@ -11,7 +11,7 @@ type Scanner interface {
 func FindOne[T any](
 	ctx context.Context,
 	db DB,
-	scan func(row Scanner) (*T, error),
+	scan func(row Scanner) (T, error),
 	query string,
 	args ...interface{},
 ) (*T, error) {
@@ -27,13 +27,13 @@ func FindOne[T any](
 		return nil, ErrRowsNotRead
 	}
 
-	return result, nil
+	return &result, nil
 }
 
 func FindMany[T any](
 	ctx context.Context,
 	db DB,
-	scan func(rows Scanner) (*T, error),
+	scan func(rows Scanner) (T, error),
 	query string,
 	args ...interface{},
 ) (data []T, err error) {
@@ -54,7 +54,7 @@ func FindMany[T any](
 			return nil, ErrRowsNotRead
 		}
 
-		data = append(data, *result)
+		data = append(data, result)
 	}
 
 	return data, nil

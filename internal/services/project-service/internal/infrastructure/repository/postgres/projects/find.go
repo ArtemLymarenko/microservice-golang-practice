@@ -6,7 +6,7 @@ import (
 	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
-func (p *ProjectRepository) scanProject(scan postgres.Scanner) (*project.Project, error) {
+func (p *ProjectRepository) scanProject(scan postgres.Scanner) (project.Project, error) {
 	var found project.Project
 	err := scan.Scan(
 		&found.Id,
@@ -20,11 +20,7 @@ func (p *ProjectRepository) scanProject(scan postgres.Scanner) (*project.Project
 		&found.ArchivedAt,
 	)
 
-	if err != nil {
-		return &found, err
-	}
-
-	return &found, nil
+	return found, err
 }
 
 func (p *ProjectRepository) FindById(ctx context.Context, id project.Id) (*project.Project, error) {
