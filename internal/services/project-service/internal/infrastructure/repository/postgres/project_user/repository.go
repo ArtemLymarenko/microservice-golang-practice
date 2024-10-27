@@ -1,28 +1,27 @@
-package projectUserPostgres
+package projectUserRepoPostgres
 
 import (
 	"context"
 	"database/sql"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
 	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
-	projectsPostgres "project-management-system/internal/project-service/internal/infrastructure/repository/postgres/projects"
-	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres/tx"
+	projectsRepoPostgres "project-management-system/internal/project-service/internal/infrastructure/repository/postgres/projects"
 )
 
 type ProjectsRepo interface {
 	Save(ctx context.Context, project project.Project) error
-	WithTx(tx *sql.Tx) *projectsPostgres.ProjectRepository
+	WithTx(tx *sql.Tx) *projectsRepoPostgres.ProjectRepository
 }
 
 type ProjectUserRepository struct {
 	db           postgres.DB
-	txManager    tx.Manager
+	txManager    postgres.TxManager
 	projectsRepo ProjectsRepo
 }
 
 func New(
 	db postgres.DB,
-	txManager tx.Manager,
+	txManager postgres.TxManager,
 	projectsRepo ProjectsRepo,
 ) *ProjectUserRepository {
 	return &ProjectUserRepository{

@@ -1,4 +1,4 @@
-package tx
+package postgres
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-type Manager interface {
+type TxManager interface {
 	Run(
 		ctx context.Context,
 		callback func(ctx context.Context, tx *sql.Tx) error,
@@ -18,13 +18,13 @@ type SQLTransactionManager struct {
 	db *sql.DB
 }
 
-func NewManager(db *sql.DB) *SQLTransactionManager {
+func NewTxManager(db *sql.DB) *SQLTransactionManager {
 	return &SQLTransactionManager{db: db}
 }
 
 func (m *SQLTransactionManager) Run(
 	ctx context.Context,
-	callback func(ctx context.Context, tx *sql.Tx) error,
+	runTx func(ctx context.Context, tx *sql.Tx) error,
 ) (rErr error) {
 	tx, err := m.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
@@ -47,7 +47,7 @@ func (m *SQLTransactionManager) Run(
 		}
 	}()
 
-	if err = callback(ctx, tx); err != nil {
+	if err = runTx(ctx, tx); err != nil {
 		return err
 	}
 

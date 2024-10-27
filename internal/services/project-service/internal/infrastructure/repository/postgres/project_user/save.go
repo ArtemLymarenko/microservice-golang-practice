@@ -1,4 +1,4 @@
-package projectUserPostgres
+package projectUserRepoPostgres
 
 import (
 	"context"

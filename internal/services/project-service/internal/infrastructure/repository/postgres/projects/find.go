@@ -1,23 +1,14 @@
-package projectsPostgres
+package projectsRepoPostgres
 
 import (
 	"context"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
+	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
-func (p *ProjectRepository) findOne(
-	ctx context.Context,
-	query string,
-	args ...interface{},
-) (*project.Project, error) {
-	stmt, err := p.db.PrepareContext(ctx, query)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = stmt.Close() }()
-
-	found := project.Project{}
-	err = stmt.QueryRowContext(ctx, args...).Scan(
+func (p *ProjectRepository) scanProject(scan postgres.Scanner) (*project.Project, error) {
+	var found project.Project
+	err := scan.Scan(
 		&found.Id,
 		&found.Name,
 		&found.Description,
@@ -30,16 +21,33 @@ func (p *ProjectRepository) findOne(
 	)
 
 	if err != nil {
-		return nil, ErrProjectNotFound
+		return &found, err
 	}
 
 	return &found, nil
 }
 
-func (p *ProjectRepository) FindById(ctx context.Context, id string) (*project.Project, error) {
-	query := `SELECT 
-    	p.id, p.name, p.description, p.status, p.production_start_at, p.production_end_at, p.created_at, p.updated_at, p.archived_at
-		FROM projects AS p WHERE p.id=$1`
+func (p *ProjectRepository) FindById(ctx context.Context, id project.Id) (*project.Project, error) {
+	query := `SELECT * FROM projects AS p WHERE p.id=$1 LIMIT 1`
 
-	return p.findOne(ctx, query, id)
+	found, err := postgres.FindOne[project.Project](ctx, p.db, p.scanProject, query, id)
+	if err != nil {
+		return nil, ErrProjectNotFound
+	}
+
+	return found, nil
+}
+
+func (p *ProjectRepository) FindByNameMany(
+	ctx context.Context,
+	name project.Name,
+) ([]project.Project, error) {
+	query := `SELECT * FROM projects AS p WHERE p.name=$1`
+
+	found, err := postgres.FindMany[project.Project](ctx, p.db, p.scanProject, query, name)
+	if err != nil {
+		return nil, ErrProjectsNotFound
+	}
+
+	return found, nil
 }
