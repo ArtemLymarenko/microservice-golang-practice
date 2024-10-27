@@ -1,0 +1,7 @@
+go 1.22.4
+
+use (
+ 	internal/services/project-service
+ 	internal/services/user-service
+ 	internal/pkg
+)

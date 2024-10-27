@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
+	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres/project_user"
 	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres/projects"
 	"project-management-system/internal/project-service/internal/service/projects"
@@ -27,8 +28,9 @@ func New(storage Storage) (*Handlers, error) {
 	}
 
 	//repos
-	projectRepo := projectsPostgres.New(connection)
-	projectUserRepo := projectUserPostgres.New(connection, projectRepo)
+	txManager := postgres.NewTxManager(connection)
+	projectRepo := projectsRepoPostgres.New(connection)
+	projectUserRepo := projectUserRepoPostgres.New(connection, txManager, projectRepo)
 
 	//services
 	projectServ := projectService.New(projectRepo, projectUserRepo)

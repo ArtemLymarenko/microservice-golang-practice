@@ -3,6 +3,7 @@ package projectService
 import (
 	"context"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
+	"project-management-system/internal/project-service/internal/domain/entity/user"
 	"project-management-system/internal/project-service/internal/domain/repository/persistent"
 	"project-management-system/internal/project-service/internal/service"
 )
@@ -22,7 +23,7 @@ func New(
 	}
 }
 
-func (p *ProjectService) GetById(ctx context.Context, id string) (*project.Project, error) {
+func (p *ProjectService) GetById(ctx context.Context, id project.Id) (*project.Project, error) {
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, service.TIMEOUT)
 	defer cancel()
 
@@ -31,7 +32,7 @@ func (p *ProjectService) GetById(ctx context.Context, id string) (*project.Proje
 
 func (p *ProjectService) AddProjectWithOwner(
 	ctx context.Context,
-	creatorId string,
+	ownerId user.Id,
 	project project.Project,
 ) error {
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, service.TIMEOUT)
@@ -39,7 +40,7 @@ func (p *ProjectService) AddProjectWithOwner(
 
 	//Some validation
 
-	err := p.projectUserTxRepository.SaveProjectWithUser(ctxWithTimeout, creatorId, project)
+	err := p.projectUserTxRepository.SaveProjectWithOwner(ctxWithTimeout, ownerId, project)
 	if err != nil {
 		return err
 	}

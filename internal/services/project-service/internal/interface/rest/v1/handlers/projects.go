@@ -11,7 +11,7 @@ import (
 )
 
 type ProjectsService interface {
-	GetById(ctx context.Context, id string) (*project.Project, error)
+	GetById(ctx context.Context, id project.Id) (*project.Project, error)
 }
 
 type ProjectsHandlerImpl struct {
@@ -27,7 +27,7 @@ func NewProjectsHandler(projectService ProjectsService) *ProjectsHandlerImpl {
 func (handler *ProjectsHandlerImpl) GetProjectById(c *gin.Context) {
 	const param = "id"
 
-	id := c.Param(param)
+	id := project.Id(c.Param(param))
 	ctx := c.Request.Context()
 
 	found, err := handler.projectService.GetById(ctx, id)
