@@ -1,13 +1,16 @@
 package project
 
-import "time"
+import (
+	_ "github.com/go-playground/validator/v10"
+	"time"
+)
 
 type Status string
 
 const (
-	Idle   Status = "idle"
-	Active Status = "active"
-	Closed Status = "closed"
+	StatusIdle   Status = "idle"
+	StatusActive Status = "active"
+	StatusClosed Status = "closed"
 )
 
 type Id string
@@ -17,13 +20,13 @@ type Name string
 type Description string
 
 type Project struct {
-	Id                Id
-	Name              Name
-	Description       Description
-	Status            Status
+	Id                Id          `validate:"required,uuid"`
+	Name              Name        `validate:"required,min=3,max=20"`
+	Description       Description `validate:"required,min=20,max=300"`
+	Status            Status      `validate:"required"`
 	ProductionStartAt time.Time
 	ProductionEndAt   time.Time
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
+	CreatedAt         time.Time `validate:"required"`
+	UpdatedAt         time.Time `validate:"required"`
 	ArchivedAt        time.Time
 }

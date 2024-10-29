@@ -7,7 +7,9 @@ import (
 
 func FromProjectRequestDtoToProject(request dto.CreateProjectRequest) project.Project {
 	return project.Project{
-		Name:        project.Name(request.Name),
-		Description: project.Description(request.Description),
+		Name:              project.Name(request.Name),
+		Description:       project.Description(request.Description),
+		ProductionStartAt: request.ProductionStartAt,
+		ProductionEndAt:   request.ProductionEndAt,
 	}
 }

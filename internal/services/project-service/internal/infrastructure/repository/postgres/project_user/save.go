@@ -4,6 +4,7 @@ import (
 	"context"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
 	"project-management-system/internal/project-service/internal/domain/valueobject"
+	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
 func (pu *ProjectUserRepository) SaveMemberToProject(
@@ -14,7 +15,13 @@ func (pu *ProjectUserRepository) SaveMemberToProject(
 	saveProjectUserQuery := `INSERT INTO 
     	projects_users("project_id", "user_id", "role")
 		VALUES ($1, $2, $3)`
-	_, err := pu.db.ExecContext(ctx, saveProjectUserQuery, projectId, member.UserId, member.Role)
+	_, err := pu.db.ExecContext(
+		ctx,
+		saveProjectUserQuery,
+		postgres.ToNullable(projectId),
+		postgres.ToNullable(member.UserId),
+		postgres.ToNullable(member.Role),
+	)
 	if err != nil {
 		return ErrSaveMember
 	}
