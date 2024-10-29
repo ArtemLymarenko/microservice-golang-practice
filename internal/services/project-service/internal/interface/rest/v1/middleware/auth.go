@@ -37,7 +37,7 @@ func Auth(jwtService JWTService) gin.HandlerFunc {
 			return
 		}
 
-		c.Set(string(ctxkey.UserId), claims.Subject)
+		c.Set(ctxkey.UserId, claims.Subject)
 		c.Next()
 	}
 }

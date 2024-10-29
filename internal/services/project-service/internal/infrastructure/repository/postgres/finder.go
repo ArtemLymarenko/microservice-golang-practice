@@ -4,36 +4,36 @@ import (
 	"context"
 )
 
-type Scanner interface {
+type RowScanner interface {
 	Scan(dest ...interface{}) error
 }
 
 func FindOne[T any](
 	ctx context.Context,
 	db DB,
-	scan func(row Scanner) (T, error),
+	scan func(row RowScanner) (T, error),
 	query string,
 	args ...interface{},
-) (*T, error) {
+) (result T, err error) {
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 	defer func() { _ = stmt.Close() }()
 
 	row := stmt.QueryRowContext(ctx, args...)
-	result, err := scan(row)
+	result, err = scan(row)
 	if err != nil {
-		return nil, ErrRowsNotRead
+		return result, ErrRowsNotRead
 	}
 
-	return &result, nil
+	return result, nil
 }
 
 func FindMany[T any](
 	ctx context.Context,
 	db DB,
-	scan func(rows Scanner) (T, error),
+	scan func(rows RowScanner) (T, error),
 	query string,
 	args ...interface{},
 ) (data []T, err error) {

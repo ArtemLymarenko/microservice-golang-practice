@@ -1,5 +1,6 @@
 package ctxkey
 
-type ContextField string
-
-const UserId ContextField = "userId"
+const (
+	UserId      = "UserId"
+	ProjectRole = "ProjectRole"
+)

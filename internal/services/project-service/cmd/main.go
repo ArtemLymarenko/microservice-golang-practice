@@ -19,13 +19,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	router := v1.MustGetGinRouter(postgres, cfg)
+	connection, err := postgres.GetConnection()
+	if err != nil {
+		logrus.Info(err.Error())
+		os.Exit(1)
+	}
+
 	path, err := appUtil.BuildHttpPath(cfg.HttpServer.Addr, cfg.HttpServer.Port)
 	if err != nil {
 		logrus.Fatal(err.Error())
 		os.Exit(1)
 	}
 
+	router := v1.MustGetGinRouter(connection, cfg)
 	server := &http.Server{
 		Addr:         path,
 		Handler:      router,
