@@ -26,7 +26,7 @@ func MustGetGinRouter(connection *sql.DB, cfg *config.Config) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	//remove logic to api gateway
+	//move logic to api gateway
 	jwtServ := jwtService.New(cfg.JWT.Secret, cfg.App.CodeName)
 
 	//repos

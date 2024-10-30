@@ -1,20 +1,15 @@
 package handlers
 
 import (
-	"database/sql"
 	"github.com/gin-gonic/gin"
 )
 
-type Storage interface {
-	GetConnection() (*sql.DB, error)
-}
-
-type ProjectHandlerIml interface {
+type ProjectHandlerImpl interface {
 	GetProjectById(c *gin.Context)
 }
 
 type Handlers struct {
-	ProjectHandler ProjectHandlerIml
+	ProjectHandler ProjectHandlerImpl
 }
 
 func New(projectService ProjectsService) *Handlers {

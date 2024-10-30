@@ -2,6 +2,7 @@ package project
 
 import (
 	"errors"
+	"project-management-system/internal/project-service/internal/domain/entity"
 	"time"
 )
 
@@ -11,10 +12,6 @@ var (
 	ErrInvalidProductionEndDate   = errors.New("invalid end project date, should be after start date")
 	ErrInvalidArchivedAtDate      = errors.New("invalid archived at date")
 )
-
-type Validator interface {
-	Struct(s interface{}) error
-}
 
 func (p *Project) ValidateStatus() error {
 	switch p.Status {
@@ -64,7 +61,7 @@ func (p *Project) ValidateArchivedAt() error {
 	return nil
 }
 
-func (p *Project) Validate(validator Validator) error {
+func (p *Project) Validate(validator entity.Validator) error {
 	if err := validator.Struct(p); err != nil {
 		return err
 	}
