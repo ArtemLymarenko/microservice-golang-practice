@@ -1,4 +1,4 @@
-package postgresdto
+package sqlrow
 
 import (
 	"database/sql"
@@ -17,5 +17,7 @@ type Project struct {
 	ArchivedAt        sql.Null[time.Time]
 }
 
-type MemberDTO struct {
+type UserRole struct {
+	UserId string
+	Role   string
 }

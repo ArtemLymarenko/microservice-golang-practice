@@ -9,7 +9,6 @@ import (
 	"project-management-system/internal/project-service/internal/domain/entity/user"
 	"project-management-system/internal/project-service/internal/domain/valueobject"
 	"project-management-system/internal/project-service/internal/service"
-	"time"
 )
 
 func (p *ProjectService) CreateProjectWithOwner(
@@ -22,9 +21,6 @@ func (p *ProjectService) CreateProjectWithOwner(
 
 	projectId := uuid.New().String()
 	proj.SetId(project.Id(projectId))
-	proj.SetStatus(project.StatusIdle)
-	proj.SetCreatedAt(time.Now())
-	proj.SetUpdatedAt(time.Now())
 
 	if err := proj.Validate(p.validator); err != nil {
 		return err

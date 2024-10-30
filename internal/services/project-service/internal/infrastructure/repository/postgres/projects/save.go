@@ -3,11 +3,11 @@ package projectsRepoPostgres
 import (
 	"context"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
-	postgresMapper "project-management-system/internal/project-service/internal/infrastructure/repository/postgres/mapper"
+	sqlmapper "project-management-system/internal/project-service/internal/infrastructure/repository/persistance/mapper"
 )
 
 func (p *ProjectRepository) Save(ctx context.Context, proj project.Project) error {
-	projectToStore := postgresMapper.FromProjectEntityToPostgres(proj)
+	projectToStore := sqlmapper.FromProjectEntityToRow(proj)
 
 	saveProjectQuery := `INSERT INTO 
     	projects(id, name, description, status, production_start_at, production_end_at, created_at, updated_at, archived_at)
