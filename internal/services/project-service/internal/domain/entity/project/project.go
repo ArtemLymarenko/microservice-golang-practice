@@ -22,11 +22,11 @@ type Description string
 type Project struct {
 	Id                Id          `validate:"required,uuid"`
 	Name              Name        `validate:"required,min=3,max=20"`
-	Description       Description `validate:"required,min=20,max=300"`
+	Description       Description `validate:"min=20,max=300"`
 	Status            Status      `validate:"required"`
-	ProductionStartAt time.Time
-	ProductionEndAt   time.Time
-	CreatedAt         time.Time `validate:"required"`
-	UpdatedAt         time.Time `validate:"required"`
-	ArchivedAt        time.Time
+	ProductionStartAt time.Time   `validate:""`
+	ProductionEndAt   time.Time   `validate:""`
+	CreatedAt         time.Time   `validate:"required"`
+	UpdatedAt         time.Time   `validate:"required"`
+	ArchivedAt        time.Time   `validate:""`
 }

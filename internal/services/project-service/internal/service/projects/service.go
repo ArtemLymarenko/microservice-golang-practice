@@ -9,20 +9,20 @@ import (
 type ProjectService struct {
 	projectsRepo    persistent.ProjectRepository
 	projectUserRepo persistent.ProjectUserRepository
-	txManager       postgres.TxManager
+	sqlTxManager    postgres.TxManager
 	validator       *validator.Validate
 }
 
 func New(
 	projectsRepo persistent.ProjectRepository,
 	projectUserRepository persistent.ProjectUserRepository,
-	txManager postgres.TxManager,
+	sqlTxManager postgres.TxManager,
 	validator *validator.Validate,
 ) *ProjectService {
 	return &ProjectService{
 		projectsRepo:    projectsRepo,
 		projectUserRepo: projectUserRepository,
-		txManager:       txManager,
+		sqlTxManager:    sqlTxManager,
 		validator:       validator,
 	}
 }

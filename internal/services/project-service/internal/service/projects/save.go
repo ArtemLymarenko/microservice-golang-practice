@@ -12,21 +12,21 @@ import (
 	"time"
 )
 
-func (p *ProjectService) CreateWithOwner(
+func (p *ProjectService) CreateProjectWithOwner(
 	ctx context.Context,
 	ownerId user.Id,
-	projectToCreate project.Project,
+	proj project.Project,
 ) error {
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, service.TIMEOUT)
 	defer cancel()
 
-	projectId := project.Id(uuid.New().String())
-	projectToCreate.SetId(projectId)
-	projectToCreate.SetStatus(project.StatusIdle)
-	projectToCreate.SetCreatedAt(time.Now())
-	projectToCreate.SetUpdatedAt(time.Now())
+	projectId := uuid.New().String()
+	proj.SetId(project.Id(projectId))
+	proj.SetStatus(project.StatusIdle)
+	proj.SetCreatedAt(time.Now())
+	proj.SetUpdatedAt(time.Now())
 
-	if err := projectToCreate.Validate(p.validator); err != nil {
+	if err := proj.Validate(p.validator); err != nil {
 		return err
 	}
 
@@ -34,7 +34,7 @@ func (p *ProjectService) CreateWithOwner(
 		projectRepoTx := p.projectsRepo.WithTx(tx)
 		projectUserTx := p.projectUserRepo.WithTx(tx)
 
-		if err := projectRepoTx.Save(ctx, projectToCreate); err != nil {
+		if err := projectRepoTx.Save(ctx, proj); err != nil {
 			return err
 		}
 
@@ -43,8 +43,8 @@ func (p *ProjectService) CreateWithOwner(
 			Role:   role.Owner,
 		}
 
-		return projectUserTx.SaveMemberToProject(ctx, projectToCreate.Id, ownerRole)
+		return projectUserTx.SaveMemberToProject(ctx, proj.Id, ownerRole)
 	}
 
-	return p.txManager.Run(ctxWithTimeout, saveProjectWithOwnerTx)
+	return p.sqlTxManager.Run(ctxWithTimeout, saveProjectWithOwnerTx)
 }

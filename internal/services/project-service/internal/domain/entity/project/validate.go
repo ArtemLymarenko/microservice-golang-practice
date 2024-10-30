@@ -65,6 +65,10 @@ func (p *Project) ValidateArchivedAt() error {
 }
 
 func (p *Project) Validate(validator Validator) error {
+	if err := validator.Struct(p); err != nil {
+		return err
+	}
+
 	if err := p.ValidateStatus(); err != nil {
 		return err
 	}
@@ -81,5 +85,5 @@ func (p *Project) Validate(validator Validator) error {
 		return err
 	}
 
-	return validator.Struct(p)
+	return nil
 }

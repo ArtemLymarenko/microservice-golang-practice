@@ -2,6 +2,7 @@ package projectsRepoPostgres
 
 import (
 	"database/sql"
+	"project-management-system/internal/project-service/internal/domain/repository/persistent"
 	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
@@ -13,6 +14,6 @@ func New(db postgres.DB) *ProjectRepository {
 	return &ProjectRepository{db}
 }
 
-func (p *ProjectRepository) WithTx(tx *sql.Tx) *ProjectRepository {
+func (p *ProjectRepository) WithTx(tx *sql.Tx) persistent.ProjectRepository {
 	return New(tx)
 }
