@@ -11,7 +11,7 @@ import (
 	projectsRepoPostgres "project-management-system/internal/project-service/internal/infrastructure/repository/postgres/projects"
 	v1Handlers "project-management-system/internal/project-service/internal/interface/rest/v1/handlers"
 	"project-management-system/internal/project-service/internal/interface/rest/v1/middleware"
-	projectService "project-management-system/internal/project-service/internal/service/projects"
+	projectsService "project-management-system/internal/project-service/internal/service/projects"
 )
 
 func MustGetGinRouter(connection *sql.DB, cfg *config.Config) *gin.Engine {
@@ -37,7 +37,7 @@ func MustGetGinRouter(connection *sql.DB, cfg *config.Config) *gin.Engine {
 	validatorService := validator.New()
 
 	//services
-	projectServ := projectService.New(projectRepo, projectUserRepo, txManager, validatorService)
+	projectServ := projectsService.New(projectRepo, projectUserRepo, txManager, validatorService)
 
 	//handlers
 	handlers := v1Handlers.New(projectServ)

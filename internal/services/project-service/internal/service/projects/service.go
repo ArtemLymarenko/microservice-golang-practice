@@ -1,4 +1,4 @@
-package projectService
+package projectsService
 
 import (
 	"project-management-system/internal/project-service/internal/domain/entity"

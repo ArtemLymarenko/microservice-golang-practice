@@ -12,8 +12,8 @@ type Project struct {
 	Status            string
 	ProductionStartAt sql.Null[time.Time]
 	ProductionEndAt   sql.Null[time.Time]
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
+	CreatedAt         sql.Null[time.Time]
+	UpdatedAt         sql.Null[time.Time]
 	ArchivedAt        sql.Null[time.Time]
 }
 

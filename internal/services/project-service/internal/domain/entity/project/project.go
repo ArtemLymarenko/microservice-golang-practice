@@ -26,7 +26,7 @@ type Project struct {
 	Status            Status      `validate:"required"`
 	ProductionStartAt time.Time   `validate:""`
 	ProductionEndAt   time.Time   `validate:""`
-	CreatedAt         time.Time   `validate:"required"`
-	UpdatedAt         time.Time   `validate:"required"`
+	CreatedAt         time.Time   `validate:""`
+	UpdatedAt         time.Time   `validate:""`
 	ArchivedAt        time.Time   `validate:""`
 }

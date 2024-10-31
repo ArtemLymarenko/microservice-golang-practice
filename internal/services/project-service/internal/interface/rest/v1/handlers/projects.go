@@ -15,7 +15,7 @@ type ProjectsService interface {
 }
 
 type ProjectsHandlerImpl struct {
-	projectService ProjectsService
+	projectsService ProjectsService
 }
 
 func NewProjectsHandler(projectService ProjectsService) *ProjectsHandlerImpl {
@@ -30,7 +30,7 @@ func (handler *ProjectsHandlerImpl) GetProjectById(c *gin.Context) {
 	id := project.Id(c.Param(param))
 	ctx := c.Request.Context()
 
-	found, err := handler.projectService.FindProjectById(ctx, id)
+	found, err := handler.projectsService.FindProjectById(ctx, id)
 	if err != nil {
 		if errors.Is(err, projectsPostgres.ErrProjectNotFound) {
 			c.JSON(http.StatusNotFound, dto.NewResponseErr(err))

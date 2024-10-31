@@ -1,4 +1,4 @@
-package projectService
+package projectsService
 
 import (
 	"context"
@@ -19,8 +19,8 @@ func (p *ProjectService) CreateProjectWithOwner(
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, service.TIMEOUT)
 	defer cancel()
 
-	projectId := uuid.New().String()
-	proj.SetId(project.Id(projectId))
+	projectId := project.Id(uuid.New().String())
+	proj.SetId(projectId)
 
 	if err := proj.Validate(p.validator); err != nil {
 		return err

@@ -1,1 +1,1 @@
-package projectService
+package projectsService

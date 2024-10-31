@@ -15,8 +15,8 @@ func FromProjectEntityToRow(from project.Project) (to sqlrow.Project) {
 		Status:            string(from.Status),
 		ProductionStartAt: postgres.ToNullable(from.ProductionStartAt),
 		ProductionEndAt:   postgres.ToNullable(from.ProductionEndAt),
-		CreatedAt:         from.CreatedAt,
-		UpdatedAt:         from.UpdatedAt,
+		CreatedAt:         postgres.ToNullable(from.CreatedAt),
+		UpdatedAt:         postgres.ToNullable(from.UpdatedAt),
 		ArchivedAt:        postgres.ToNullable(from.ArchivedAt),
 	}
 }
