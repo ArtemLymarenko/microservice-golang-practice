@@ -5,10 +5,6 @@ import (
 	"time"
 )
 
-type Claims struct {
-	*jwt.RegisteredClaims
-}
-
 type JWTService struct {
 	secret string
 	issuer string
@@ -18,14 +14,30 @@ func New(secret, issuer string) *JWTService {
 	return &JWTService{secret, issuer}
 }
 
-func (jwtService *JWTService) Generate(userId string, exp time.Duration) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:   userId,
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(exp)),
-		Issuer:    jwtService.issuer,
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-	})
+func (jwtService *JWTService) addCustomFields(
+	claims jwt.MapClaims,
+	customFields map[string]interface{},
+) jwt.MapClaims {
+	for key, value := range customFields {
+		claims[key] = value
+	}
+	return claims
+}
 
+func (jwtService *JWTService) Generate(
+	subject string,
+	exp time.Duration,
+	additionalFields map[string]interface{},
+) (string, error) {
+	claims := jwt.MapClaims{
+		"Subject":   subject,
+		"ExpiresAt": jwt.NewNumericDate(time.Now().Add(exp)),
+		"Issuer":    jwtService.issuer,
+		"IssuedAt":  jwt.NewNumericDate(time.Now()),
+	}
+
+	claims = jwtService.addCustomFields(claims, additionalFields)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(jwtService.secret))
 	if err != nil {
 		return "", err
@@ -37,10 +49,11 @@ func (jwtService *JWTService) Generate(userId string, exp time.Duration) (string
 func (jwtService *JWTService) GenerateTokenAsync(
 	userId string,
 	exp time.Duration,
+	additionalFields map[string]interface{},
 ) chan string {
 	tokenChan := make(chan string)
 	go func() {
-		token, err := jwtService.Generate(userId, exp)
+		token, err := jwtService.Generate(userId, exp, additionalFields)
 		if err != nil {
 			tokenChan <- ""
 			return
@@ -53,7 +66,7 @@ func (jwtService *JWTService) GenerateTokenAsync(
 }
 
 func (jwtService *JWTService) Verify(token string) (*Claims, error) {
-	parsedToken, err := jwt.ParseWithClaims(token, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
+	parsedToken, err := jwt.ParseWithClaims(token, &jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(jwtService.secret), nil
 	})
 
@@ -61,7 +74,7 @@ func (jwtService *JWTService) Verify(token string) (*Claims, error) {
 		return nil, err
 	}
 
-	if claims, ok := parsedToken.Claims.(*jwt.RegisteredClaims); ok && parsedToken.Valid {
+	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
 		return &Claims{claims}, nil
 	}
 

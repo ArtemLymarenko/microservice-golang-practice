@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	jwtService "project-management-system/internal/pkg/jwt-service"
+	jwtService "project-management-system/internal/pkg/jwt_service"
 	"project-management-system/internal/user-service/internal/config"
 	"project-management-system/internal/user-service/internal/domain/model"
 	"project-management-system/internal/user-service/internal/interface/rest/dto"
@@ -18,7 +18,7 @@ type UsersServ interface {
 }
 
 type JWTService interface {
-	GenerateTokenAsync(userId string, exp time.Duration) chan string
+	GenerateTokenAsync(userId string, exp time.Duration, additionalFields map[string]interface{}) chan string
 	Verify(token string) (*jwtService.Claims, error)
 }
 
@@ -99,7 +99,12 @@ func (a *AuthService) IssueTokens(ctx context.Context, refreshToken string) (*dt
 		return nil, err
 	}
 
-	user, err := a.usersService.FindById(ctx, claims.Subject)
+	userId, ok := claims.GetClaim(jwtService.ClaimKeySubject).(string)
+	if !ok {
+		return nil, ErrExtractUserFromToken
+	}
+
+	user, err := a.usersService.FindById(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -115,8 +120,8 @@ func (a *AuthService) IssueTokens(ctx context.Context, refreshToken string) (*dt
 func (a *AuthService) generateTokens(
 	sub string,
 ) (*dto.AuthResponse, error) {
-	accessChan := a.jwtService.GenerateTokenAsync(sub, a.jwtConfig.AccessExp)
-	refreshChan := a.jwtService.GenerateTokenAsync(sub, a.jwtConfig.RefreshExp)
+	accessChan := a.jwtService.GenerateTokenAsync(sub, a.jwtConfig.AccessExp, nil)
+	refreshChan := a.jwtService.GenerateTokenAsync(sub, a.jwtConfig.RefreshExp, nil)
 	defer close(accessChan)
 	defer close(refreshChan)
 

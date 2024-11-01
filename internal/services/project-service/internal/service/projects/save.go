@@ -39,8 +39,27 @@ func (p *ProjectService) CreateProjectWithOwner(
 			Role:   role.Owner,
 		}
 
-		return projectUserTx.SaveMemberToProject(ctx, proj.Id, ownerRole)
+		return projectUserTx.AddUserToProject(ctx, proj.Id, ownerRole)
 	}
 
 	return p.sqlTxManager.Run(ctxWithTimeout, saveProjectWithOwnerTx)
+}
+
+func (p *ProjectService) AddMemberToProject(
+	ctx context.Context,
+	projectId project.Id,
+	memberWithRole valueobject.UserRole,
+) error {
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, service.TIMEOUT)
+	defer cancel()
+
+	if err := role.Validate(memberWithRole.Role); err != nil {
+		return err
+	}
+
+	if err := p.projectUserRepo.AddUserToProject(ctxWithTimeout, projectId, memberWithRole); err != nil {
+		return err
+	}
+
+	return nil
 }

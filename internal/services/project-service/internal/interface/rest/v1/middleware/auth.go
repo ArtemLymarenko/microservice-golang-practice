@@ -19,7 +19,7 @@ type JWTService interface {
 	Verify(token string) (*jwtService.Claims, error)
 }
 
-func Auth(jwtService JWTService) gin.HandlerFunc {
+func Auth(jwtServ JWTService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 
@@ -30,14 +30,14 @@ func Auth(jwtService JWTService) gin.HandlerFunc {
 			return
 		}
 
-		claims, err := jwtService.Verify(token)
+		claims, err := jwtServ.Verify(token)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, dto.NewResponseErr(ErrFailedToAuthorizeUser))
 			c.Abort()
 			return
 		}
 
-		c.Set(ctxkey.UserId, claims.Subject)
+		c.Set(ctxkey.UserId, claims.GetClaim(jwtService.ClaimKeySubject))
 		c.Next()
 	}
 }

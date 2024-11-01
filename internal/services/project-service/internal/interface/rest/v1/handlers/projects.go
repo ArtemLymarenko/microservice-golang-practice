@@ -11,7 +11,7 @@ import (
 )
 
 type ProjectsService interface {
-	FindProjectById(ctx context.Context, id project.Id) (*project.Project, error)
+	FindProjectById(ctx context.Context, id project.Id) (project.Project, error)
 }
 
 type ProjectsHandlerImpl struct {

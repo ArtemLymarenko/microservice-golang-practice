@@ -1,7 +1,7 @@
 package sqlmapper
 
 import (
-	sqlStorage "project-management-system/internal/pkg/sql-storage"
+	sqlStorage "project-management-system/internal/pkg/sql_storage"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
 	"project-management-system/internal/project-service/internal/domain/valueobject"
 	"project-management-system/internal/project-service/internal/infrastructure/repository/sql/dto"

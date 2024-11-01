@@ -8,4 +8,6 @@ var (
 	ErrMemberWithRoleNotFound  = errors.New("failed to find member with role of project")
 	ErrMembersWithRoleNotFound = errors.New("failed to find members with role of project")
 	ErrDeleteMember            = errors.New("failed to delete project member")
+	ErrRoleNotChanged          = errors.New("failed to change user role in the project")
+	ErrProjectsNotFound        = errors.New("failed to find  user projects")
 )

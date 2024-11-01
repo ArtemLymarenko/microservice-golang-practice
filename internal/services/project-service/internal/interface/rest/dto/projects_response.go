@@ -7,5 +7,5 @@ type CreateProjectResponse struct {
 }
 
 type GetProjectByIdResponse struct {
-	Project *project.Project `json:"project"`
+	Project project.Project `json:"project"`
 }

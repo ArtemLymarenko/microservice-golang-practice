@@ -7,7 +7,7 @@ import (
 	sqlmapper "project-management-system/internal/project-service/internal/infrastructure/repository/sql/mapper"
 )
 
-func (pu *ProjectUserRepository) SaveMemberToProject(
+func (pu *ProjectUserRepository) AddUserToProject(
 	ctx context.Context,
 	projectId project.Id,
 	member valueobject.UserRole,

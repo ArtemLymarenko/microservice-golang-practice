@@ -5,7 +5,7 @@ import (
 	"project-management-system/internal/project-service/internal/domain/entity/project"
 )
 
-func (p *ProjectRepository) UpdateById(ctx context.Context, project project.Project) error {
+func (p *ProjectRepository) Update(ctx context.Context, project project.Project) error {
 	updateProjectQuery := `
 		UPDATE projects 
 		SET 

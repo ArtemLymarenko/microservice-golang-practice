@@ -16,10 +16,7 @@ func (pu *ProjectUserRepository) FindAllProjectMembers(
 	query := `SELECT p.user_id FROM projects_users as p WHERE project_id=$1`
 
 	scanUser := func(row sqlStorage.RowScanner) (userId user.Id, err error) {
-		err = row.Scan(
-			&userId,
-		)
-
+		err = row.Scan(&userId)
 		return userId, err
 	}
 
@@ -31,18 +28,14 @@ func (pu *ProjectUserRepository) FindAllProjectMembers(
 	return userIds, nil
 }
 
-func (pu *ProjectUserRepository) FindAllProjectMembersWithRoles(
+func (pu *ProjectUserRepository) FindAllProjectUsersWithRoles(
 	ctx context.Context,
 	projectId project.Id,
 ) ([]valueobject.UserRole, error) {
 	query := `SELECT p.role, p.user_id FROM projects_users as p WHERE project_id=$1`
 
 	scanUserRoles := func(row sqlStorage.RowScanner) (result valueobject.UserRole, err error) {
-		err = row.Scan(
-			&result.Role,
-			&result.UserId,
-		)
-
+		err = row.Scan(&result.Role, &result.UserId)
 		return result, err
 	}
 
@@ -54,6 +47,21 @@ func (pu *ProjectUserRepository) FindAllProjectMembersWithRoles(
 	return usersWithRoles, nil
 }
 
+func (pu *ProjectUserRepository) FindUserProjectIds(ctx context.Context, userId user.Id) ([]project.Id, error) {
+	query := `SELECT p.project_id FROM projects_users as p WHERE user_id=$1`
+
+	scanProjectId := func(row sqlStorage.RowScanner) (result project.Id, err error) {
+		err = row.Scan(&result)
+		return result, err
+	}
+
+	projects, err := sqlStorage.FindMany(ctx, pu.db, scanProjectId, query, userId)
+	if err != nil {
+		return nil, ErrProjectsNotFound
+	}
+	return projects, nil
+}
+
 func (pu *ProjectUserRepository) FindUserRoleByProject(
 	ctx context.Context,
 	userId user.Id,
@@ -62,10 +70,7 @@ func (pu *ProjectUserRepository) FindUserRoleByProject(
 	query := `SELECT p.role FROM projects_users as p WHERE project_id=$1 AND user_id=$2 LIMIT 1`
 
 	scanRole := func(row sqlStorage.RowScanner) (result role.Role, err error) {
-		err = row.Scan(
-			&result,
-		)
-
+		err = row.Scan(&result)
 		return result, err
 	}
 

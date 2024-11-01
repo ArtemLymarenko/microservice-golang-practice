@@ -21,3 +21,8 @@ type UpdateProjectRequest struct {
 	UpdatedAt         time.Time `json:"updatedAt"`
 	ArchivedAt        time.Time `json:"archivedAt"`
 }
+
+type AddMemberToProjectRequest struct {
+	UserId string `json:"userId"`
+	Role   string `json:"role"`
+}

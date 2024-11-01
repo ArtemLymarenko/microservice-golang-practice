@@ -11,16 +11,16 @@ import (
 )
 
 type ProjectUserRepository interface {
-	SaveMemberToProject(
+	AddUserToProject(
 		ctx context.Context,
 		projectId project.Id,
-		member valueobject.UserRole,
+		user valueobject.UserRole,
 	) error
 	FindAllProjectMembers(
 		ctx context.Context,
 		projectId project.Id,
 	) ([]user.Id, error)
-	FindAllProjectMembersWithRoles(
+	FindAllProjectUsersWithRoles(
 		ctx context.Context,
 		projectId project.Id,
 	) ([]valueobject.UserRole, error)
@@ -29,6 +29,13 @@ type ProjectUserRepository interface {
 		userId user.Id,
 		projectId project.Id,
 	) (result role.Role, err error)
-	DeleteProjectMember(ctx context.Context, projectId project.Id) error
+	FindUserProjectIds(ctx context.Context, userId user.Id) ([]project.Id, error)
+	DeleteUserFromProject(ctx context.Context, projectId project.Id) error
+	ChangeUserRoleInProject(
+		ctx context.Context,
+		newRole role.Role,
+		userId user.Id,
+		projectId project.Id,
+	) error
 	WithTx(tx *sql.Tx) *projectUserRepoPostgres.ProjectUserRepository
 }
