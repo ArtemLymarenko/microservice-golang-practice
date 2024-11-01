@@ -1,22 +1,22 @@
 package projectsService
 
 import (
+	"project-management-system/internal/pkg/sqlStorage"
 	"project-management-system/internal/project-service/internal/domain/entity"
 	"project-management-system/internal/project-service/internal/domain/repository/persistent"
-	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
 type ProjectService struct {
 	projectsRepo    persistent.ProjectRepository
 	projectUserRepo persistent.ProjectUserRepository
-	sqlTxManager    postgres.TxManager
+	sqlTxManager    sqlStorage.TxManager
 	validator       entity.Validator
 }
 
 func New(
 	projectsRepo persistent.ProjectRepository,
 	projectUserRepository persistent.ProjectUserRepository,
-	sqlTxManager postgres.TxManager,
+	sqlTxManager sqlStorage.TxManager,
 	validator entity.Validator,
 ) *ProjectService {
 	return &ProjectService{

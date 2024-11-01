@@ -2,15 +2,15 @@ package projectsRepoPostgres
 
 import (
 	"database/sql"
+	"project-management-system/internal/pkg/sqlStorage"
 	"project-management-system/internal/project-service/internal/domain/repository/persistent"
-	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
 type ProjectRepository struct {
-	db postgres.DB
+	db sqlStorage.DB
 }
 
-func New(db postgres.DB) *ProjectRepository {
+func New(db sqlStorage.DB) *ProjectRepository {
 	return &ProjectRepository{db}
 }
 

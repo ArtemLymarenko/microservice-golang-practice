@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	jwtService "project-management-system/internal/pkg/jwt-service"
+	"project-management-system/internal/pkg/sqlStorage"
 	"project-management-system/internal/project-service/internal/config"
-	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 	projectUserRepoPostgres "project-management-system/internal/project-service/internal/infrastructure/repository/postgres/project_user"
 	projectsRepoPostgres "project-management-system/internal/project-service/internal/infrastructure/repository/postgres/projects"
 	v1Handlers "project-management-system/internal/project-service/internal/interface/rest/v1/handlers"
@@ -26,14 +26,16 @@ func MustGetGinRouter(connection *sql.DB, cfg *config.Config) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	//move logic to api gateway
-	jwtServ := jwtService.New(cfg.JWT.Secret, cfg.App.CodeName)
+	//sql
+	sqlManager := sqlStorage.NewSqlDB(connection)
+	txManager := sqlStorage.NewTxManager(connection)
 
 	//repos
-	txManager := postgres.NewTxManager(connection)
-	projectRepo := projectsRepoPostgres.New(connection)
-	projectUserRepo := projectUserRepoPostgres.New(connection, txManager, projectRepo)
+	projectRepo := projectsRepoPostgres.New(sqlManager)
+	projectUserRepo := projectUserRepoPostgres.New(sqlManager)
 
+	//third-party
+	jwtServ := jwtService.New(cfg.JWT.Secret, cfg.App.CodeName) //move logic to api gateway
 	validatorService := validator.New()
 
 	//services

@@ -2,11 +2,11 @@ package projectsRepoPostgres
 
 import (
 	"context"
+	"project-management-system/internal/pkg/sqlStorage"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
-	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
-func (p *ProjectRepository) scanProject(row postgres.RowScanner) (project.Project, error) {
+func (p *ProjectRepository) scanProject(row sqlStorage.RowScanner) (project.Project, error) {
 	var found project.Project
 	err := row.Scan(
 		&found.Id,
@@ -26,12 +26,12 @@ func (p *ProjectRepository) scanProject(row postgres.RowScanner) (project.Projec
 func (p *ProjectRepository) FindById(ctx context.Context, id project.Id) (*project.Project, error) {
 	query := `SELECT * FROM projects AS p WHERE p.id=$1 LIMIT 1`
 
-	found, err := postgres.FindOne[project.Project](ctx, p.db, p.scanProject, query, id)
+	result, err := sqlStorage.FindOne(ctx, p.db, p.scanProject, query, id)
 	if err != nil {
 		return nil, ErrProjectNotFound
 	}
 
-	return &found, nil
+	return &result, nil
 }
 
 func (p *ProjectRepository) FindByNameMany(
@@ -40,10 +40,10 @@ func (p *ProjectRepository) FindByNameMany(
 ) ([]project.Project, error) {
 	query := `SELECT * FROM projects AS p WHERE p.name=$1`
 
-	found, err := postgres.FindMany[project.Project](ctx, p.db, p.scanProject, query, name)
+	result, err := sqlStorage.FindMany(ctx, p.db, p.scanProject, query, name)
 	if err != nil {
 		return nil, ErrProjectsNotFound
 	}
 
-	return found, nil
+	return result, nil
 }

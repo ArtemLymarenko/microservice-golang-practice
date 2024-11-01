@@ -2,11 +2,11 @@ package projectUserRepoPostgres
 
 import (
 	"context"
+	"project-management-system/internal/pkg/sqlStorage"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
 	"project-management-system/internal/project-service/internal/domain/entity/role"
 	"project-management-system/internal/project-service/internal/domain/entity/user"
 	"project-management-system/internal/project-service/internal/domain/valueobject"
-	"project-management-system/internal/project-service/internal/infrastructure/repository/postgres"
 )
 
 func (pu *ProjectUserRepository) FindAllProjectMembers(
@@ -15,21 +15,20 @@ func (pu *ProjectUserRepository) FindAllProjectMembers(
 ) ([]user.Id, error) {
 	query := `SELECT p.user_id FROM projects_users as p WHERE project_id=$1`
 
-	userScan := func(row postgres.RowScanner) (user.Id, error) {
-		var found user.Id
-		err := row.Scan(
-			&found,
+	scanUser := func(row sqlStorage.RowScanner) (userId user.Id, err error) {
+		err = row.Scan(
+			&userId,
 		)
 
-		return found, err
+		return userId, err
 	}
 
-	users, err := postgres.FindMany[user.Id](ctx, pu.db, userScan, query, projectId)
+	userIds, err := sqlStorage.FindMany(ctx, pu.db, scanUser, query, projectId)
 	if err != nil {
 		return nil, ErrMembersNotFound
 	}
 
-	return users, nil
+	return userIds, nil
 }
 
 func (pu *ProjectUserRepository) FindAllProjectMembersWithRoles(
@@ -38,43 +37,42 @@ func (pu *ProjectUserRepository) FindAllProjectMembersWithRoles(
 ) ([]valueobject.UserRole, error) {
 	query := `SELECT p.role, p.user_id FROM projects_users as p WHERE project_id=$1`
 
-	userRolesScan := func(row postgres.RowScanner) (valueobject.UserRole, error) {
-		var found valueobject.UserRole
-		err := row.Scan(
-			&found.Role,
-			&found.UserId,
+	scanUserRoles := func(row sqlStorage.RowScanner) (result valueobject.UserRole, err error) {
+		err = row.Scan(
+			&result.Role,
+			&result.UserId,
 		)
 
-		return found, err
+		return result, err
 	}
 
-	users, err := postgres.FindMany[valueobject.UserRole](ctx, pu.db, userRolesScan, query, projectId)
+	usersWithRoles, err := sqlStorage.FindMany(ctx, pu.db, scanUserRoles, query, projectId)
 	if err != nil {
 		return nil, ErrMembersWithRoleNotFound
 	}
 
-	return users, nil
+	return usersWithRoles, nil
 }
 
 func (pu *ProjectUserRepository) FindUserRoleByProject(
 	ctx context.Context,
 	userId user.Id,
 	projectId project.Id,
-) (result role.Role, err error) {
+) (foundRole role.Role, err error) {
 	query := `SELECT p.role FROM projects_users as p WHERE project_id=$1 AND user_id=$2 LIMIT 1`
 
-	roleScan := func(row postgres.RowScanner) (found role.Role, err error) {
+	scanRole := func(row sqlStorage.RowScanner) (result role.Role, err error) {
 		err = row.Scan(
-			&found,
+			&result,
 		)
 
-		return found, err
+		return result, err
 	}
 
-	result, err = postgres.FindOne[role.Role](ctx, pu.db, roleScan, query, userId, projectId)
+	foundRole, err = sqlStorage.FindOne(ctx, pu.db, scanRole, query, userId, projectId)
 	if err != nil {
-		return result, ErrMembersWithRoleNotFound
+		return foundRole, ErrMemberWithRoleNotFound
 	}
 
-	return result, nil
+	return foundRole, nil
 }

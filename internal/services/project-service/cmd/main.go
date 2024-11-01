@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 	appUtil "project-management-system/internal/pkg/app"
-	"project-management-system/internal/pkg/storage"
+	"project-management-system/internal/pkg/postgres"
 	"project-management-system/internal/project-service/internal/app"
 	"project-management-system/internal/project-service/internal/config"
 	v1 "project-management-system/internal/project-service/internal/interface/rest/v1"
@@ -13,13 +13,13 @@ import (
 
 func main() {
 	cfg := config.New()
-	postgres, err := storage.NewPostgres(cfg.Postgres, cfg.Env)
+	db, err := postgres.New(cfg.Postgres, cfg.Env)
 	if err != nil {
 		logrus.Info(err.Error())
 		os.Exit(1)
 	}
 
-	connection, err := postgres.GetConnection()
+	connection, err := db.GetConnection()
 	if err != nil {
 		logrus.Info(err.Error())
 		os.Exit(1)
@@ -40,6 +40,6 @@ func main() {
 		IdleTimeout:  cfg.HttpServer.IdleTimeout,
 	}
 
-	application := app.New(postgres, server)
+	application := app.New(db, server)
 	application.Start()
 }

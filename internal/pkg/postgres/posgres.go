@@ -1,4 +1,4 @@
-package storage
+package postgres
 
 import (
 	"database/sql"
@@ -12,30 +12,25 @@ import (
 	"project-management-system/internal/pkg/config"
 )
 
-const (
-	sslDisable    = "disable"
-	sslVerifyFull = "verify-full"
-)
-
-func getSSLConfig(env commonconfig.Env) string {
-	var sslConfig string
-	if env == commonconfig.EnvLocal {
-		sslConfig = sslDisable
-	} else {
-		sslConfig = sslVerifyFull
-	}
-
-	return sslConfig
+type Config interface {
+	GetUser() string
+	GetPassword() string
+	GetHost() string
+	GetName() string
+	GetDialect() string
+	GetPort() int
+	GetPoolMin() int
+	GetPoolMax() int
 }
 
-type postgres struct {
+type Postgres struct {
 	db *sql.DB
 }
 
-func NewPostgres(
-	ps PostgresConfig,
+func New(
+	ps Config,
 	env commonconfig.Env,
-) (Postgres, error) {
+) (*Postgres, error) {
 	connectionPath := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
 		ps.GetUser(),
@@ -79,21 +74,21 @@ func NewPostgres(
 
 	logrus.Info("migrations created")
 
-	return &postgres{db}, nil
+	return &Postgres{db}, nil
 }
 
-func (p *postgres) CloseConnection() error {
+func (p *Postgres) CloseConnection() error {
 	if err := p.db.Close(); err != nil {
-		return ErrClosePostgresConnection
+		return ErrCloseConnection
 	}
 
 	return nil
 }
 
-func (p *postgres) GetConnection() (*sql.DB, error) {
+func (p *Postgres) GetConnection() (*sql.DB, error) {
 	if p.db != nil {
 		return p.db, nil
 	}
 
-	return nil, ErrGetPostgresConnection
+	return nil, ErrGetConnection
 }
