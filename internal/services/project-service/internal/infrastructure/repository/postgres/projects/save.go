@@ -3,7 +3,7 @@ package projectsRepoPostgres
 import (
 	"context"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
-	sqlmapper "project-management-system/internal/project-service/internal/infrastructure/repository/persistance/mapper"
+	sqlmapper "project-management-system/internal/project-service/internal/infrastructure/repository/sql/mapper"
 )
 
 func (p *ProjectRepository) Save(ctx context.Context, proj project.Project) error {

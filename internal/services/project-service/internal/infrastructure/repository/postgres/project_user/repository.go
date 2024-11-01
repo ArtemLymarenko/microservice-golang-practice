@@ -2,15 +2,15 @@ package projectUserRepoPostgres
 
 import (
 	"database/sql"
-	"project-management-system/internal/pkg/sqlStorage"
+	sqlSstorage "project-management-system/internal/pkg/sql_storage"
 )
 
 type ProjectUserRepository struct {
-	db sqlStorage.DB
+	db sqlSstorage.DB
 }
 
 func New(
-	db sqlStorage.DB,
+	db sqlSstorage.DB,
 ) *ProjectUserRepository {
 	return &ProjectUserRepository{
 		db: db,

@@ -2,7 +2,7 @@ package projectsRepoPostgres
 
 import (
 	"context"
-	"project-management-system/internal/pkg/sqlStorage"
+	sqlStorage "project-management-system/internal/pkg/sql_storage"
 	"project-management-system/internal/project-service/internal/domain/entity/project"
 )
 

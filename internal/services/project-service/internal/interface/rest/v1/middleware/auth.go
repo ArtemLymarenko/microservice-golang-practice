@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	jwtService "project-management-system/internal/pkg/jwt-service"
+	jwtService "project-management-system/internal/pkg/jwt_service"
 	"project-management-system/internal/project-service/internal/interface/rest/ctxkey"
 	"project-management-system/internal/project-service/internal/interface/rest/dto"
 	"strings"
